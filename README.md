@@ -7,10 +7,14 @@ This Sailwind mod is intended to keep track of various player activities. Below 
 * [SailwindModdingHelper 2.0.3](https://thunderstore.io/c/sailwind/p/App24/SailwindModdingHelper/)
 
 ## Fish Caught Log
+
+![Screenshot of the Fish Caught UI](https://github.com/bryon82/Sail-a-dex/blob/main/Screenshots/fishCaughtUI.jpg)
 A UI showing how many fish that you caught separated by the different types. Access it by selecting the "fish caught" bookmark in the log.  
 A fish is registered as caught once you reel it in and collect it. Fish names will appear as "???" until caught the first time. This can be configured as noted below.
 
 ## Ports Visited Log
+
+![Screenshot of the Ports Visited UI](https://github.com/bryon82/Sail-a-dex/blob/main/Screenshots/portsVisitedUI.jpg)
 A UI showing which ports you have visited separated by region. Access it by selecting the "ports visited" bookmark in the log.  
 A port is registered as visited once you enter the area where mission goods are normally delivered. Port names can be configured to be hidden.
 
