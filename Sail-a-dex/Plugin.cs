@@ -17,6 +17,8 @@ namespace sailadex
 
         internal static Plugin instance;
         internal static ManualLogSource logger;
+        internal static ConfigEntry<bool> fishNamesHidden;
+        internal static ConfigEntry<bool> portNamesHidden;
         internal static ConfigEntry<bool> fishCaughtUIEnabled;
         internal static ConfigEntry<bool> portsVisitedUIEnabled;
 
@@ -26,8 +28,11 @@ namespace sailadex
         {
             instance = this;
             logger = Logger;
-            fishCaughtUIEnabled = Config.Bind("Settings", "Enable Fish Caught UI", true, "If set to true the UI for how many fish you caught will appear in your Log. Setting to false, continuing a game where previously enabled, and then saving will erase all previous recorded fish caught progress.");
-            portsVisitedUIEnabled = Config.Bind("Settings", "Enable Ports Visited UI", true, "If set to true the UI which ports you have visited will appear in your Log. Setting to false, continuing a game where previously enabled, and then saving will erase all previous recorded port visit progress.");
+            fishNamesHidden = Config.Bind("Settings", "Hide Fish Names Before Caught", true, "true = the fish names will be hidden before being caught for the first time.");
+            portNamesHidden = Config.Bind("Settings", "Hide Port Names Before Visited", false, "true = the port names will be hidden before visited for the first time.");
+            fishCaughtUIEnabled = Config.Bind("Settings", "Enable Fish Caught UI", true, "true = the UI for how many fish you caught will be enabled. Setting to false, continuing a game where previously enabled, and then saving will erase all previous recorded fish caught progress.");
+            portsVisitedUIEnabled = Config.Bind("Settings", "Enable Ports Visited UI", true, "true = the UI which ports you have visited will be enabled. Setting to false, continuing a game where previously enabled, and then saving will erase all previous recorded port visit progress.");
+
             harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PLUGIN_ID);
         }
 

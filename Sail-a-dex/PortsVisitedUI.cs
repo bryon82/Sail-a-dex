@@ -57,8 +57,8 @@ namespace sailadex
         {
             if (visitedPorts.ContainsKey(portName))
             {
-                Debug.Log("Visited: " + portName);
                 visitedPorts[portName] = true;
+                //Debug.Log("Visited: " + portName);
             }            
         }
 
@@ -67,13 +67,10 @@ namespace sailadex
             int i = 0;
             foreach (KeyValuePair<string, bool> port in visitedPorts)
             {
-                if (i > 23)
-                {
-                    Debug.Log(i + " " + port.Key);
-                    i++;
-                    break;
-                }
-                portNameTMs[i].text = port.Key;
+                if (Plugin.portNamesHidden.Value)
+                    portNameTMs[i].text = port.Value ? port.Key : "???";
+                else
+                    portNameTMs[i].text = port.Key;
                 portVisitedTMs[i].text = port.Value ? "✓" : "✗";
                 //Debug.Log(port.Key + " " + port.Value);
                 i++;

@@ -26,6 +26,7 @@ namespace sailadex
         public void RegisterCatch(string fishName)
         {
             caughtFish[fishName]++;
+            //Debug.Log("Caught: " + fishName);
         }
 
         public void UpdateTexts()
@@ -33,7 +34,10 @@ namespace sailadex
             int i = 0;
             foreach (KeyValuePair<string, int> fish in caughtFish)
             {
-                fishNameTMs[i].text = fish.Value > 0 ? fish.Key.Substring(3, fish.Key.IndexOf("(") - 4) : "???";
+                if (Plugin.fishNamesHidden.Value)
+                    fishNameTMs[i].text = fish.Value > 0 ? fish.Key.Substring(3, fish.Key.IndexOf("(") - 4) : "???";
+                else
+                    fishNameTMs[i].text = fish.Key.Substring(3, fish.Key.IndexOf("(") - 4);
                 caughtCountTMs[i].text = fish.Value.ToString();
                 //Debug.Log(fish.Key + " " + fish.Value);
                 i++;
