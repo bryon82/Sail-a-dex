@@ -21,7 +21,6 @@ Fish names will appear as "???" until caught the first time by default but can b
 A UI showing which ports you have visited separated by region.  
 A port is registered as visited once you enter the area where mission goods are normally delivered.  
 Badges are acquired upon visiting all ports within a region as well as visiting every port.  
-(Thank you [NANDbrew](https://github.com/NANDbrew) for allowing the use of his NANDTweaks region logos for use in the region badges!)  
 Access this log by selecting the "ports visited" bookmark in the log.  
 Port names are visible by default but can be configured to be displayed as "???" until visited for the first time.
 

@@ -248,7 +248,7 @@ namespace sailadex
                 }
 
                 var allPortsBN = "allPortsBadge";
-                var allPortsBadge = CreateBadgeObject(allPortsBN, portsVisitedUI.transform, new Vector3(0.1f, 0.07f, 1f), new Vector3(-0.15f, -0.2f, -0.007f));
+                var allPortsBadge = CreateBadgeObject(allPortsBN, portsVisitedUI.transform, new Vector3(0.1f, 0.0675f, 1f), new Vector3(-0.15f, -0.2f, -0.007f));
                 allPortsBadge.transform.localEulerAngles = new Vector3(0f, 180f, 0f);
                 portsVisitedUI.GetComponent<PortsVisitedUI>().portBadgeGOs.Add(allPortsBN, allPortsBadge);
 
