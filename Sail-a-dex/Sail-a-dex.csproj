@@ -7,7 +7,7 @@
     <ProjectGuid>{165A01B3-48DA-400D-A25F-D6D01B2B3120}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sail_a_dex</RootNamespace>
+    <RootNamespace>sailadex</RootNamespace>
     <AssemblyName>Sail-a-dex</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -52,6 +52,10 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>E:\SteamLibrary\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\SteamLibrary\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>E:\SteamLibrary\steamapps\common\Sailwind\Sailwind_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
@@ -64,6 +68,8 @@
   <ItemGroup>
     <Compile Include="FishCaughtUI.cs" />
     <Compile Include="LogUIPatches.cs" />
+    <Compile Include="AssetsLoader.cs" />
+    <Compile Include="Names.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="PortsVisitedUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

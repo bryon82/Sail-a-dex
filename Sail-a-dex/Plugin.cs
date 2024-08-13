@@ -13,7 +13,7 @@ namespace sailadex
     {
         public const string PLUGIN_ID = "com.raddude82.sailadex";
         public const string PLUGIN_NAME = "Sail-A-Dex";
-        public const string PLUGIN_VERSION = "1.0.0";
+        public const string PLUGIN_VERSION = "1.1.0";
 
         internal static Plugin instance;
         internal static ManualLogSource logger;
@@ -32,8 +32,7 @@ namespace sailadex
             portNamesHidden = Config.Bind("Settings", "Hide Port Names Before Visited", false, "true = the port names will be hidden before visited for the first time.");
             fishCaughtUIEnabled = Config.Bind("Settings", "Enable Fish Caught UI", true, "true = the UI for how many fish you caught will be enabled. Setting to false, continuing a game where previously enabled, and then saving will erase all previous recorded fish caught progress.");
             portsVisitedUIEnabled = Config.Bind("Settings", "Enable Ports Visited UI", true, "true = the UI which ports you have visited will be enabled. Setting to false, continuing a game where previously enabled, and then saving will erase all previous recorded port visit progress.");
-
-            harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PLUGIN_ID);
+            harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PLUGIN_ID);            
         }
 
         private void OnDestroy()
