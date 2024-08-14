@@ -3,7 +3,7 @@
 This Sailwind mod is intended to keep track of various player activities along with badges that are acquired upon meeting certain criteria. Below are the currently tracked items and what is configurable.
 
 ### Requires
-* [BepinEx 5.4.23](https://github.com/BepInEx/BepInEx/releases)
+* [BepInEx 5.4.23](https://github.com/BepInEx/BepInEx/releases)
 * [SailwindModdingHelper 2.0.3](https://thunderstore.io/c/sailwind/p/App24/SailwindModdingHelper/)
 
 ## Fish Caught Log
@@ -31,4 +31,5 @@ Port names are visible by default but can be configured to be displayed as "???"
   **WARNING**: Disabling a previously enabled log and then saving the game will erase all previously saved log progress.
 
 ## Installation
-Place the Sail-a-dex folder (not the contents, the whole thing) into the Sailwind/BepinEx/Plugins folder.
+Place the Sail-a-dex folder (not the contents, the whole thing) into the Sailwind/BepInEx/Plugins folder.  
+If upgrading from v1.0.0 delete the old Sail-a-dex from the BepInEx/plugins folder first.
