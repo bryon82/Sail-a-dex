@@ -24,7 +24,7 @@ Badges are acquired upon visiting all ports within a region as well as visiting 
 Access this log by selecting the "ports visited" bookmark in the log.  
 Port names are visible by default but can be configured to be displayed as "???" until visited for the first time.
 
-## Configurable in BepinEx config
+## Configurable in BepInEx config
 * By default the fish names are hidden before being caught for the first time, this can be disabled.
 * By default port names are visible, can be configured to be hidden until visited for the first time.
 * Both the Fish Caught Log and the Ports Visited Log can be turned off.  
@@ -33,3 +33,7 @@ Port names are visible by default but can be configured to be displayed as "???"
 ## Installation
 Place the Sail-a-dex folder (not the contents, the whole thing) into the Sailwind/BepInEx/Plugins folder.  
 If upgrading from v1.0.0 delete the old Sail-a-dex from the BepInEx/plugins folder first.
+
+## Future Features
+* Popups on achievement badge earned.
+* Looking into tracking other stats (heaviest total cargo load, longest time out at sea, etc) and possibly badges for them.
