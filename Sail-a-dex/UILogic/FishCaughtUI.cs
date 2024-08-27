@@ -1,5 +1,5 @@
-﻿using HarmonyLib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace sailadex
@@ -82,26 +82,38 @@ namespace sailadex
         public void CheckIndividualFishBadges(string fishName)
         {
             var shortFishName = ShortFishName(fishName);
-            fishBadges[shortFishName + "25"] = caughtFish[fishName] >= 25;
-            fishBadges[shortFishName + "50"] = caughtFish[fishName] >= 50;
-            fishBadges[shortFishName + "100"] = caughtFish[fishName] >= 100;
+            int[] amts = { 25, 50, 100 };
+            foreach (int amt in amts)
+            {
+                if (!fishBadges[shortFishName + "" + amt] && caughtFish[fishName] >= amt)
+                {
+                    if (Plugin.notificationsEnabled.Value)
+                        NotificationUiQueue.instance.QueueNotification($"Caught {amt} {shortFishName}");
+                    fishBadges[shortFishName + "" + amt] = true;
+                }
+            }
         }
 
         public void CheckAllFishBadges()
         {
-            var allFish = true;
-            var catchSum = 0;
-            foreach (KeyValuePair<string, int> fish in caughtFish)
+            var catchSum = caughtFish.Values.Sum();
+            int[] amts = { 50, 250, 500 };
+            for (int i = 0; i < amts.Length; i++) 
             {
-                catchSum += fish.Value;
-                if (fish.Value == 0)
-                    allFish = false;
+                if (!fishBadges[Names.totalFishBadgeNames[i]] && catchSum >= amts[i])
+                {
+                    if (Plugin.notificationsEnabled.Value)
+                        NotificationUiQueue.instance.QueueNotification($"Caught {amts[i]} fish");
+                    fishBadges[Names.totalFishBadgeNames[i]] = true;
+                }
             }
 
-            fishBadges[Names.totalFishBadgeNames[0]] = catchSum >= 50;
-            fishBadges[Names.totalFishBadgeNames[1]] = catchSum >= 250;
-            fishBadges[Names.totalFishBadgeNames[2]] = catchSum >= 500;
-            fishBadges[Names.totalFishBadgeNames[3]] = allFish;
+            if (!fishBadges[Names.totalFishBadgeNames[3]] && !caughtFish.Values.Where(v => v.Equals(0)).Any())
+            {
+                if (Plugin.notificationsEnabled.Value)
+                    NotificationUiQueue.instance.QueueNotification($"Caught all fish");
+                fishBadges[Names.totalFishBadgeNames[3]] = true;
+            }
         }
 
         private void UpdateBadges()

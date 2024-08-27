@@ -1,26 +1,35 @@
-﻿using HarmonyLib;
+﻿using SailwindModdingHelper;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using SailwindModdingHelper;
 
 namespace sailadex
 {
     internal class LogUIPatches
     {
-        private static GameObject bookmarkFishCaught;
-        private static GameObject bookmarkPortsVisited;
         private static GameObject fishCaughtUI;
         private static GameObject portsVisitedUI;
-        public const MissionListMode fishCaught = (MissionListMode)5;
-        public const MissionListMode portsVisited = (MissionListMode)6;
+        private static GameObject statsUI;
+        private const MissionListMode fishCaught = (MissionListMode)5;
+        private const MissionListMode portsVisited = (MissionListMode)6;
+        private const MissionListMode stats = (MissionListMode)7;
         private static Stack<float> bookmarkPos;
+
+        public static void UnloadResources()
+        {
+            if (Plugin.fishCaughtUIEnabled.Value)
+                UnityEngine.Object.Destroy(fishCaughtUI);
+            if (Plugin.portsVisitedUIEnabled.Value)
+                UnityEngine.Object.Destroy(portsVisitedUI);
+            if (Plugin.statsUIEnabled.Value)
+                UnityEngine.Object.Destroy(statsUI);
+        }
+
 
         [HarmonyPatch(typeof(MissionListUI))]
         private class MissionListUIPatches
         {
-
             [HarmonyPostfix]
             [HarmonyPatch("HideUI")]
             public static void HideUIPatches(MissionListUI __instance)
@@ -29,6 +38,8 @@ namespace sailadex
                     fishCaughtUI.SetActive(value: false);
                 if (Plugin.portsVisitedUIEnabled.Value)
                     portsVisitedUI.SetActive(value: false);
+                if (Plugin.statsUIEnabled.Value)
+                    statsUI.SetActive(value: false);
             }
 
             [HarmonyPostfix]
@@ -39,15 +50,21 @@ namespace sailadex
                     fishCaughtUI.SetActive(value: false);
                 if (Plugin.portsVisitedUIEnabled.Value)
                     portsVisitedUI.SetActive(value: false);
+                if (Plugin.statsUIEnabled.Value)
+                    statsUI.SetActive(value: false);
                 switch (mode)
-                {               
+                {
                     case fishCaught:
                         fishCaughtUI.SetActive(value: true);
-                        fishCaughtUI.GetComponent<FishCaughtUI>().UpdatePage();
+                        FishCaughtUI.instance.UpdatePage();
                         break;
                     case portsVisited:
                         portsVisitedUI.SetActive(value: true);
-                        portsVisitedUI.GetComponent<PortsVisitedUI>().UpdatePage();
+                        PortsVisitedUI.instance.UpdatePage();
+                        break;
+                    case stats:
+                        statsUI.SetActive(value: true);
+                        StatsUI.instance.UpdatePage();
                         break;
                 }
             }
@@ -59,8 +76,12 @@ namespace sailadex
                 AssetsLoader.Start();
 
                 bookmarkPos = new Stack<float>();
-                bookmarkPos.Push(-0.397f);
-                bookmarkPos.Push(-0.27f);
+                bookmarkPos.Push(-0.515f);
+                bookmarkPos.Push(-0.387f);
+                bookmarkPos.Push(-0.26f);
+
+                if (Plugin.notificationSoundVolume.Value > 0f)
+                    AssetsLoader.LoadAudio();
 
                 if (Plugin.fishCaughtUIEnabled.Value)
                 {
@@ -68,19 +89,21 @@ namespace sailadex
                     MakeFishCaughtUI(___modeButtons, ___reputationUI);
                 }
 
-
                 if (Plugin.portsVisitedUIEnabled.Value)
                 {
                     AssetsLoader.LoadPortBadges();
                     MakePortsVisitedUI(___modeButtons, ___reputationUI);
                 }
-                                   
+
+                if (Plugin.statsUIEnabled.Value)
+                    MakeStatsUI(___modeButtons, ___reputationUI);
+
             }
 
             private static void MakeFishCaughtUI(GameObject modeButtons, GameObject repUI)
             {
                 GameObject bookmarkReceipts = modeButtons.transform.GetChild(9).gameObject;
-                bookmarkFishCaught = GameObject.Instantiate(bookmarkReceipts);
+                GameObject bookmarkFishCaught = GameObject.Instantiate(bookmarkReceipts);
                 bookmarkFishCaught.transform.parent = modeButtons.transform;
                 bookmarkFishCaught.transform.localPosition = new Vector3(bookmarkPos.Pop(), bookmarkReceipts.transform.localPosition[1], bookmarkReceipts.transform.localPosition[2]);
                 bookmarkFishCaught.transform.localRotation = bookmarkReceipts.transform.localRotation;
@@ -131,7 +154,7 @@ namespace sailadex
                     {
                         var badgeName = newFishCaughtTextGO.name + badgeNums[j];
                         var badge = CreateBadgeObject(badgeName, newFishCaughtTextGO.transform, new Vector3(14.75f, 14.75f, 1f), new Vector3(75f + j * 15f, 0f, 0f));
-                        fishCaughtUI.GetComponent<FishCaughtUI>().fishBadgeGOs.Add(badgeName, badge);
+                        FishCaughtUI.instance.fishBadgeGOs.Add(badgeName, badge);
                     }
                 }
 
@@ -154,21 +177,21 @@ namespace sailadex
                 {
                     var badgeName = totalCaughtBadges[j];
                     var badge = CreateBadgeObject(badgeName, totalCaughtTextGO.transform, new Vector3(15f, 15f, 1f), new Vector3(15f + j * 20f, -15f, 0f));
-                    fishCaughtUI.GetComponent<FishCaughtUI>().fishBadgeGOs.Add(badgeName, badge);
+                    FishCaughtUI.instance.fishBadgeGOs.Add(badgeName, badge);
                 }
 
                 UnityEngine.Object.Destroy(fishCaughtTextGO);
-                fishCaughtUI.GetComponent<FishCaughtUI>().fishNameTMs = fishnameTexts;
-                fishCaughtUI.GetComponent<FishCaughtUI>().caughtCountTMs = caughtCountTexts;
+                FishCaughtUI.instance.fishNameTMs = fishnameTexts;
+                FishCaughtUI.instance.caughtCountTMs = caughtCountTexts;
                 Plugin.logger.LogInfo("Loaded fish caught UI");
             }
 
             private static void MakePortsVisitedUI(GameObject modeButtons, GameObject repUI)
             {
                 GameObject bookmarkReceipts = modeButtons.transform.GetChild(9).gameObject;
-                bookmarkPortsVisited = GameObject.Instantiate(bookmarkReceipts);
+                GameObject bookmarkPortsVisited = GameObject.Instantiate(bookmarkReceipts);
                 bookmarkPortsVisited.transform.parent = modeButtons.transform;
-                bookmarkPortsVisited.transform.localPosition = new Vector3(bookmarkPos.Pop(), 0.0028f, bookmarkReceipts.transform.localPosition[2]); 
+                bookmarkPortsVisited.transform.localPosition = new Vector3(bookmarkPos.Pop(), 0.0028f, bookmarkReceipts.transform.localPosition[2]);
                 bookmarkPortsVisited.transform.localRotation = bookmarkReceipts.transform.localRotation;
                 bookmarkPortsVisited.transform.localScale = bookmarkReceipts.transform.localScale;
                 bookmarkPortsVisited.name = "bookmark ports visited";
@@ -198,8 +221,8 @@ namespace sailadex
                 lagoon.name = "lagoon";
                 lagoon.GetComponent<TextMesh>().text = "Fire Fish Lagoon";
 
-                TextMesh[] portNameTMs = new TextMesh[24];
-                TextMesh[] portVisitedTMs = new TextMesh[24];
+                TextMesh[] portNameTMs = new TextMesh[Names.portNames.Length];
+                TextMesh[] portVisitedTMs = new TextMesh[Names.portNames.Length];
                 int portVisitedIndex = 0;
                 int[] numPorts = { 7, 6, 7, 4 };
 
@@ -239,171 +262,172 @@ namespace sailadex
                         portNameTMs[portVisitedIndex] = portNameTM.GetComponent<TextMesh>();
                         portVisitedTMs[portVisitedIndex] = portVisitedTM.GetComponent<TextMesh>();
                         portVisitedIndex++;
-                    }                    
+                    }
 
                     var badgeName = portsVisitedGO.name + "Badge";
                     var badge = CreateBadgeObject(badgeName, portsVisitedGO, new Vector3(15f, 15f, 1f), new Vector3(-8f, -2f, 0f));
-                    portsVisitedUI.GetComponent<PortsVisitedUI>().portBadgeGOs.Add(badgeName, badge);
+                    PortsVisitedUI.instance.portBadgeGOs.Add(badgeName, badge);
 
                 }
 
                 var allPortsBN = "allPortsBadge";
                 var allPortsBadge = CreateBadgeObject(allPortsBN, portsVisitedUI.transform, new Vector3(0.1f, 0.0675f, 1f), new Vector3(-0.15f, -0.2f, -0.007f));
                 allPortsBadge.transform.localEulerAngles = new Vector3(0f, 180f, 0f);
-                portsVisitedUI.GetComponent<PortsVisitedUI>().portBadgeGOs.Add(allPortsBN, allPortsBadge);
+                PortsVisitedUI.instance.portBadgeGOs.Add(allPortsBN, allPortsBadge);
 
 
-                portsVisitedUI.GetComponent<PortsVisitedUI>().portNameTMs = portNameTMs;
-                portsVisitedUI.GetComponent<PortsVisitedUI>().portVisitedTMs = portVisitedTMs;
+                PortsVisitedUI.instance.portNameTMs = portNameTMs;
+                PortsVisitedUI.instance.portVisitedTMs = portVisitedTMs;
                 Plugin.logger.LogInfo("Loaded ports visited UI");
             }
-        }
 
-        private static GameObject CreateBadgeObject(string name, Transform parent, Vector3 scale, Vector3 position) 
-        {
-            GameObject badge = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            badge.layer = 5;
-            UnityEngine.Object.Destroy(badge.GetComponent<MeshCollider>());
-            badge.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            badge.transform.SetParent(parent, false);
-            badge.transform.localScale = scale;
-            badge.transform.localPosition = position;
-            badge.name = name;
-            badge.GetComponent<MeshRenderer>().material = AssetsLoader.materials[name];
-            return badge;            
-        }
-
-        [HarmonyPatch(typeof(FishingRodFish))]
-        private class FishingRodFishPatches
-        {
-            [HarmonyPrefix]
-            [HarmonyPatch("CollectFish")]
-            public static void CollectFishPatch(FishingRodFish __instance, GameObject ___currentFish)
+            private static void MakeStatsUI(GameObject modeButtons, GameObject repUI)
             {
-                if (Plugin.fishCaughtUIEnabled.Value)
-                    fishCaughtUI.GetComponent<FishCaughtUI>().RegisterCatch(___currentFish.name);
-            }
-        }
-               
-        [HarmonyPatch(typeof(IslandMarketWarehouseArea))]
-        private class IslandMarketWarehouseAreaPatches
-        {
+                GameObject bookmarkReceipts = modeButtons.transform.GetChild(9).gameObject;
+                GameObject bookmark = GameObject.Instantiate(bookmarkReceipts);
+                bookmark.transform.parent = modeButtons.transform;
+                bookmark.transform.localPosition = new Vector3(bookmarkPos.Pop(), -0.0032f, -0.4566f);
+                bookmark.transform.localRotation = bookmarkReceipts.transform.localRotation;
+                bookmark.transform.localScale = bookmarkReceipts.transform.localScale;
+                bookmark.name = "bookmark stats";
+                bookmark.transform.GetChild(0).gameObject.GetComponent<TextMesh>().text = "stats & transit";
+                GPButtonLogMode gPButtonLogMode = bookmark.GetComponent<GPButtonLogMode>();
+                Traverse.Create(gPButtonLogMode).Field("mode").SetValue(stats);
+                UnityEngine.Object.Destroy(bookmark.GetComponent<cakeslice.Outline>());
 
+                statsUI = GameObject.Instantiate(repUI);
+                UnityEngine.Object.Destroy(statsUI.GetComponent<ReputationUI>());
+                statsUI.transform.parent = repUI.transform.parent;
+                statsUI.transform.localPosition = repUI.transform.localPosition;
+                statsUI.transform.localRotation = repUI.transform.localRotation;
+                statsUI.transform.localScale = repUI.transform.localScale;
+                statsUI.name = "stats ui";
+                UnityEngine.Object.Destroy(statsUI.transform.GetChild(2).gameObject);
+                UnityEngine.Object.Destroy(statsUI.transform.GetChild(1).gameObject);
+                statsUI.AddComponent<StatsUI>();
+
+                GameObject statsTextGO = statsUI.transform.GetChild(0).gameObject;
+                statsTextGO.GetComponent<TextMesh>().font = statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().font;
+                statsTextGO.GetComponent<TextMesh>().fontSize = 45;
+                statsTextGO.GetComponent<MeshRenderer>().material = statsTextGO.transform.GetChild(1).GetComponent<MeshRenderer>().material;
+                statsTextGO.transform.GetChild(0).gameObject.name = "current value";
+                statsTextGO.transform.GetChild(0).localPosition = new Vector3(38f, 0f, statsTextGO.transform.GetChild(1).localPosition[2]);
+                statsTextGO.transform.GetChild(0).GetComponent<TextMesh>().font = statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().font;
+                statsTextGO.transform.GetChild(0).GetComponent<TextMesh>().fontSize = 45;                
+                statsTextGO.transform.GetChild(0).GetComponent<TextMesh>().anchor = TextAnchor.MiddleLeft;
+                statsTextGO.transform.GetChild(0).GetComponent<MeshRenderer>().material = statsTextGO.transform.GetChild(1).GetComponent<MeshRenderer>().material;
+                statsTextGO.transform.GetChild(1).gameObject.name = "record value";
+                statsTextGO.transform.GetChild(1).localPosition = new Vector3(80f, 0f, statsTextGO.transform.GetChild(1).localPosition[2]);
+                statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().fontSize = 45;
+                statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().anchor = TextAnchor.MiddleLeft;
+                statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().fontStyle = FontStyle.Normal;
+                Dictionary<string, TextMesh> statTMs = new Dictionary<string, TextMesh>();
+
+                AddTrackedStat(statsTextGO, "CargoMass", 0.205f, statTMs);
+                AddTrackedStat(statsTextGO, "UnderwayTime", 0.205f - 0.035f, statTMs);
+
+                int j = 1;
+                foreach (string ltStat in Names.intStatNames)
+                {
+                    if (ltStat == "UnderwayDay") continue;
+                    AddTrackedStat(statsTextGO, ltStat, -0.035f * j, statTMs, true);
+                    j++;
+                }
+
+                int i = 0;
+                foreach (string transit in Names.transitNames)
+                {
+                    AddTrackedStat(statsTextGO, transit, 0.205f - 0.035f * i, statTMs, false, true);
+                    i++;
+                }
+
+                StatsUI.instance.statTMs = statTMs;
+
+                statsTextGO.name = "stats header";
+                statsTextGO.GetComponent<TextMesh>().text = "Stat                        Current                     Record";
+                statsTextGO.transform.localPosition = new Vector3(0.82f, 0.24f, -0.007f);
+                statsTextGO.GetComponent<TextMesh>().fontSize = 50;
+                statsTextGO.GetComponent<TextMesh>().fontStyle = FontStyle.Bold;
+                UnityEngine.Object.Destroy(statsTextGO.transform.GetChild(4).gameObject);
+                UnityEngine.Object.Destroy(statsTextGO.transform.GetChild(3).gameObject);
+                UnityEngine.Object.Destroy(statsTextGO.transform.GetChild(2).gameObject);
+                UnityEngine.Object.Destroy(statsTextGO.transform.GetChild(1).gameObject);
+                UnityEngine.Object.Destroy(statsTextGO.transform.GetChild(0).gameObject);
+
+                GameObject ltStatsTextGO = GameObject.Instantiate(statsTextGO, statsTextGO.transform.parent);
+                ltStatsTextGO.name = "lifetime stats header";
+                ltStatsTextGO.GetComponent<TextMesh>().text = "Lifetime Stats";
+                ltStatsTextGO.transform.localPosition = new Vector3(0.82f, 0.0f, -0.007f);
+                UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(4).gameObject);
+                UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(3).gameObject);
+                UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(2).gameObject);
+                UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(1).gameObject);
+                UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(0).gameObject);
+
+                GameObject transitTextGO = GameObject.Instantiate(statsTextGO, statsTextGO.transform.parent);
+                transitTextGO.name = "transit times header";
+                transitTextGO.GetComponent<TextMesh>().text = "Transit Times         Last                            Record";
+                transitTextGO.transform.localPosition = new Vector3(0.08f, 0.24f, -0.007f);
+                UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(4).gameObject);
+                UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(3).gameObject);
+                UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(2).gameObject);
+                UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(1).gameObject);
+                UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(0).gameObject);
+            }
+
+
+            private static void AddTrackedStat(GameObject templateGO, string name, float yPos, Dictionary<string, TextMesh> statTMs, bool ltime = false, bool transit = false)
+            {
+                var xPos = transit ? 0.08f : 0.82f;
+                var preText = transit ? "last" : "current";
+                GameObject newTextGO = GameObject.Instantiate(templateGO);
+                UnityEngine.Object.Destroy(newTextGO.transform.GetChild(4).gameObject);
+                UnityEngine.Object.Destroy(newTextGO.transform.GetChild(3).gameObject);
+                UnityEngine.Object.Destroy(newTextGO.transform.GetChild(2).gameObject);
+                if (ltime)
+                    UnityEngine.Object.Destroy(newTextGO.transform.GetChild(1).gameObject);
+                newTextGO.name = name;
+                newTextGO.transform.parent = templateGO.transform.parent;
+                newTextGO.transform.localPosition = new Vector3(xPos, yPos, templateGO.transform.localPosition[2]);
+                newTextGO.transform.localRotation = templateGO.transform.localRotation;
+                newTextGO.transform.localScale = templateGO.transform.localScale;
+                statTMs[name] = newTextGO.GetComponent<TextMesh>();
+                statTMs[preText + name] = newTextGO.transform.GetChild(0).GetComponent<TextMesh>();
+                if (!ltime)
+                    statTMs["record" + name] = newTextGO.transform.GetChild(1).GetComponent<TextMesh>();
+            }
+
+            private static GameObject CreateBadgeObject(string name, Transform parent, Vector3 scale, Vector3 position)
+            {
+                GameObject badge = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                badge.layer = 5;
+                UnityEngine.Object.Destroy(badge.GetComponent<MeshCollider>());
+                badge.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                badge.transform.SetParent(parent, false);
+                badge.transform.localScale = scale;
+                badge.transform.localPosition = position;
+                badge.name = name;
+                badge.GetComponent<MeshRenderer>().material = AssetsLoader.materials[name];
+                return badge;
+            }
+
+        }
+
+        [HarmonyPatch(typeof(NotificationUi))]
+        private class NotificationUiPatches
+        {
             [HarmonyPostfix]
-            [HarmonyPatch("OnTriggerEnter")]
-            public static void OnTriggerEnterPatch(IslandMarketWarehouseArea __instance, IslandMarket ___market, Collider other)
+            [HarmonyPatch("Start")]
+            public static void StartPatch(NotificationUi ___instance)
             {
-                if (Plugin.portsVisitedUIEnabled.Value && other.CompareTag("Player"))                
-                    portsVisitedUI.GetComponent<PortsVisitedUI>().RegisterVisit(___market.GetPortName());                             
+                if (Plugin.notificationsEnabled.Value)
+                    ___instance.gameObject.AddComponent<NotificationUiQueue>();
             }
-        }
+        }           
 
-        [HarmonyPatch(typeof(SaveLoadManager))]
-        private class SaveLoadManagerPatches
-        {
-            [HarmonyPostfix]
-            [HarmonyPatch("SaveModData")]
-            public static void DoSaveGamePatch()
-            {
-                var saveContainer = new RaddudeSaveContainer();
-
-                if (Plugin.fishCaughtUIEnabled.Value)
-                {
-                    saveContainer.caughtFish = fishCaughtUI.GetComponent<FishCaughtUI>().caughtFish.ToDictionary(
-                        entry => entry.Key,
-                        entry => entry.Value);
-
-                    saveContainer.fishBadges = fishCaughtUI.GetComponent<FishCaughtUI>().fishBadges.ToDictionary(
-                        entry => entry.Key,
-                        entry => entry.Value);
-                }
-
-
-                if (Plugin.portsVisitedUIEnabled.Value)
-                {
-                    saveContainer.visitedPorts = portsVisitedUI.GetComponent<PortsVisitedUI>().visitedPorts.ToDictionary(
-                        entry => entry.Key,
-                        entry => entry.Value);
-
-                    saveContainer.portBadges = portsVisitedUI.GetComponent<PortsVisitedUI>().portBadges.ToDictionary(
-                        entry => entry.Key,
-                        entry => entry.Value);
-                }
-
-                ModSave.Save(Plugin.instance.Info, saveContainer);
-            }
-
-            [HarmonyPatch("LoadModData")]
-            [HarmonyPostfix]
-            public static void LoadModDataPatch()
-            {
-                if (!ModSave.Load(Plugin.instance.Info, out RaddudeSaveContainer saveContainer))
-                {
-                    Plugin.logger.LogWarning("Save file loading failed. File is either corrupt or does not exist. If this is the first time loading this save with this mod, this is normal.");
-                    return;
-                }
-
-                if (Plugin.fishCaughtUIEnabled.Value)
-                {
-                    if (saveContainer.caughtFish != null)
-                    {
-                        foreach (KeyValuePair<string, int> fish in saveContainer.caughtFish)
-                        {
-                            if (fishCaughtUI.GetComponent<FishCaughtUI>().caughtFish.ContainsKey(fish.Key))
-                            {
-                                fishCaughtUI.GetComponent<FishCaughtUI>().caughtFish[fish.Key] = fish.Value;
-                            }
-                        }
-                    }
-
-                    if (saveContainer.fishBadges != null)
-                    {
-                        foreach (KeyValuePair<string, bool> fish in saveContainer.fishBadges)
-                        {
-                            if (fishCaughtUI.GetComponent<FishCaughtUI>().fishBadges.ContainsKey(fish.Key))
-                            {
-                                fishCaughtUI.GetComponent<FishCaughtUI>().fishBadges[fish.Key] = fish.Value;
-                            }
-                        }
-                    }
-
-                    // for old saves that didn't have badges yet
-                    var oceanFishPrefabs = OceanFishes.instance.GetPrivateField<GameObject[]>("fishPrefabs");
-                    foreach (GameObject fish in oceanFishPrefabs)
-                        fishCaughtUI.GetComponent<FishCaughtUI>().CheckIndividualFishBadges(fish.name);
-                    fishCaughtUI.GetComponent<FishCaughtUI>().CheckAllFishBadges();
-                }
-
-                if (Plugin.portsVisitedUIEnabled.Value)
-                {
-                    if (saveContainer.visitedPorts != null)
-                    {
-                        foreach (KeyValuePair<string, bool> port in saveContainer.visitedPorts)
-                        {
-                            if (portsVisitedUI.GetComponent<PortsVisitedUI>().visitedPorts.ContainsKey(port.Key))
-                            {
-                                portsVisitedUI.GetComponent<PortsVisitedUI>().visitedPorts[port.Key] = port.Value;
-                            }
-                        }
-                    }
-
-                    if (saveContainer.portBadges != null)
-                    {
-                        foreach (KeyValuePair<string, bool> port in saveContainer.portBadges)
-                        {
-                            if (portsVisitedUI.GetComponent<PortsVisitedUI>().portBadges.ContainsKey(port.Key))
-                            {
-                                portsVisitedUI.GetComponent<PortsVisitedUI>().portBadges[port.Key] = port.Value;
-                            }
-                        }
-                    }
-
-                    // for old saves that didn't have badges yet
-                    portsVisitedUI.GetComponent<PortsVisitedUI>().CheckBadges();
-                }
-            }
-        }
-
+        // TODO: make a mod save solution that works with backups. SaveSlots class for ideas
+        // TODO: make a converter for this to a save container in SaveLoadPatches 
+        // have to keep RaddudeSaveContainer here with this name or else it breaks old saves
         [Serializable]
         public class RaddudeSaveContainer
         {
@@ -411,12 +435,12 @@ namespace sailadex
             public Dictionary<string, bool> visitedPorts;
             public Dictionary<string, bool> fishBadges;
             public Dictionary<string, bool> portBadges;
+            public Dictionary<string, float> floatStats;
+            public Dictionary<string, int> intStats;
+            public Dictionary<string, bool[]> boolArrayStats;
         }
 
-
-
-
-        // Cheats for testing
+        //// Cheats for testing
         //[HarmonyPatch(typeof(OceanFishes))]
         //private class OceanFishesPatches
         //{
@@ -426,27 +450,42 @@ namespace sailadex
         //    {
         //        if (Input.GetKeyDown("p"))
         //        {
+
+        //            //StatsUI.instance.RegisterMoored("island 9 E (dragon cliffs)");
+        //            Debug.Log("Distance to land: " + GameState.distanceToLand);
+        //            Debug.Log("Distance to land: " + GameState.distanceToLand);
         //            Debug.Log("DebugFishCatch: " + __instance.GetFish(Utilities.PlayerTransform).name);
         //            for (int i = 0; i < 5; i++)
-        //                fishCaughtUI.GetComponent<FishCaughtUI>().RegisterCatch(__instance.GetFish(Utilities.PlayerTransform).name);
+        //                FishCaughtUI.instance.RegisterCatch(__instance.GetFish(Utilities.PlayerTransform).name);
 
         //            string[] ports = { "Gold Rock City",
-        //                                "Al'Nilem",
-        //                                //"Neverdin",
-        //                                "Albacore Town",
-        //                                "Alchemist's Island",
-        //                                "Al'Ankh Academy",
-        //                                "Oasis"
-        //                                };
+        //                                    "Al'Nilem",
+        //                                    //"Neverdin",
+        //                                    "Albacore Town",
+        //                                    "Alchemist's Island",
+        //                                    "Al'Ankh Academy",
+        //                                    "Oasis"
+        //                                    };
         //            foreach (var port in ports)
         //            {
         //                Debug.Log("Debug visit: " + port);
-        //                portsVisitedUI.GetComponent<PortsVisitedUI>().RegisterVisit(port);
+        //                PortsVisitedUI.instance.RegisterVisit(port);
         //            }
         //        }
-
+        //        if (Input.GetKeyDown("l"))
+        //        {
+        //            StatsUI.instance.RegisterMoored("island 15 M (Fort)");
+        //        }
+        //        if (Input.GetKeyDown("u"))
+        //        {
+        //            Plugin.logger.LogInfo($"LastBoat: {GameState.lastBoat} CurrentBoat: {GameState.currentBoat?.parent}");
+        //            //StatsUI.instance.RegisterMoored("island 27 Lagoon Shipyard");
+        //        }
         //        if (Input.GetKeyDown("i"))
         //        {
+        //            //StatsUI.instance.RegisterUnderway("island 1 A (gold rock)");
+
+        //            Debug.Log($"Current Boat: {GameState.currentBoat} Last Boat: {GameState.lastBoat}");
         //            string[] portNames = {
         //                //Emerald Archipelago
         //                "Dragon Cliffs",
@@ -473,7 +512,7 @@ namespace sailadex
         //            foreach (var port in portNames)
         //            {
         //                Debug.Log("Debug visit: " + port);
-        //                portsVisitedUI.GetComponent<PortsVisitedUI>().RegisterVisit(port);
+        //                PortsVisitedUI.instance.RegisterVisit(port);
         //            }
         //        }
         //    }

@@ -12,8 +12,7 @@ This Sailwind mod is intended to keep track of various player activities along w
 A UI showing how many fish that you caught separated by the different types.  
 A fish is registered as caught once you reel it in and collect it.  
 Badges are acquired upon catching 25, 50, and 100 of each type, 50, 250, and 500 total, and also for catching at least one of each type.  
-Access this log by selecting the "fish caught" bookmark in the player log.  
-Fish names will appear as "???" until caught the first time by default but can be configured to be visible from the start.
+Access this log by selecting the "fish caught" bookmark in the player log.
 
 ## Ports Visited Log
 
@@ -22,12 +21,26 @@ A UI showing which ports you have visited separated by region.
 A port is registered as visited once you enter the area where mission goods are normally delivered.  
 Badges are acquired upon visiting all ports within a region as well as visiting every port.  
 Access this log by selecting the "ports visited" bookmark in the log.  
-Port names are visible by default but can be configured to be displayed as "???" until visited for the first time.
+
+## Stats & Transit Log
+
+![Screenshot of the Stats & Transit UI](https://github.com/bryon82/Sail-a-dex/blob/main/Screenshots/statsUI.jpg)
+A UI showing various stats and transit times between region capital cities.
+Cargo mass stat "Record" will be recorded once you are a certain distance from land.
+Cargo mass is only the items in crates, barrels, and packages.
+If you use PassageDude mod and book travel or teleport via console that will reset your currently tracked transits.
+
+## Notifications
+
+Notifications will pop up along with a ship bell sound on badges earned and fastest transit times recorded. 
+
 
 ## Configurable in BepinEx config
 * By default the fish names are hidden before being caught for the first time, this can be disabled.
 * By default port names are visible, can be configured to be hidden until visited for the first time.
-* Both the Fish Caught Log and the Ports Visited Log can be turned off.  
+* Notifications can be disabled.
+* Notification sound can be adjusted and disabled.
+* All Logs can be disabled individually.  
   **WARNING**: Disabling a previously enabled log and then saving the game will erase all previously saved log progress.
 
 ## Installation

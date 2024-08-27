@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 ## [v1.1.0] - 2024-08-13
 
 ### Added
+- Stats & Transit UI.
+- Notifications for badges and transit records.
+- Notification sound
+
+### Changed
+- Reorganized code
+- Refactored badge checks for ports visited
+
+## [v1.1.0] - 2024-08-13
+
+### Added
 
 - Badges for fish caught.
 - Badges for ports visited.

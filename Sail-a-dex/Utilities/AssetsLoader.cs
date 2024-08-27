@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
-using SailwindModdingHelper;
+﻿using SailwindModdingHelper;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace sailadex
 {
@@ -10,6 +10,7 @@ namespace sailadex
     {
         public static Dictionary<string, Material> materials;
         public static Dictionary<string, Texture2D> textures;
+        public static AudioClip notificationSound;
 
         public static void Start()
         {
@@ -88,5 +89,35 @@ namespace sailadex
             material.SetShaderPassEnabled("ShadowCaster", false);
             return material;
         }
+
+        public static void GetAudioClip(string fileName, List<AudioClip> audioClips)
+        {
+            var clipPath = Path.Combine(Extensions.GetFolderLocation(Plugin.instance.Info), "assets", "sounds", fileName + ".wav");
+            var webRequest = UnityWebRequestMultimedia.GetAudioClip($"file://{clipPath}", AudioType.WAV);
+
+            webRequest.SendWebRequest();
+
+            while (!webRequest.isDone)
+                _ = 0;
+
+            if (webRequest.isNetworkError)
+            {
+                Debug.Log(webRequest.error);
+            }
+            else
+            {
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(webRequest);
+                clip.name = fileName;
+                audioClips.Add(clip);
+            }
+        }
+
+        public static void LoadAudio()
+        {
+            List<AudioClip> audioClips = new List<AudioClip>();
+            GetAudioClip("twoBells", audioClips);
+            Debug.Log($"AudioClips length {audioClips.Count}");
+            notificationSound = audioClips[0];
+        }       
     }
 }
