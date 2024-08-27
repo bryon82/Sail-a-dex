@@ -35,7 +35,7 @@ If you use PassageDude mod and book travel or teleport via console that will res
 Notifications will pop up along with a ship bell sound on badges earned and fastest transit times recorded. 
 
 
-## Configurable in BepinEx config
+## Configurable in BepInEx config
 * By default the fish names are hidden before being caught for the first time, this can be disabled.
 * By default port names are visible, can be configured to be hidden until visited for the first time.
 * Notifications can be disabled.
@@ -46,3 +46,7 @@ Notifications will pop up along with a ship bell sound on badges earned and fast
 ## Installation
 Place the Sail-a-dex folder (not the contents, the whole thing) into the Sailwind/BepInEx/Plugins folder.  
 If upgrading from v1.0.0 delete the old Sail-a-dex from the BepInEx/plugins folder first.
+
+## Future Features
+* Popups on achievement badge earned.
+* Looking into tracking other stats (heaviest total cargo load, longest time out at sea, etc) and possibly badges for them.
