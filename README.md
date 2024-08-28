@@ -26,8 +26,11 @@ Access this log by selecting the "ports visited" bookmark in the log.
 
 ![Screenshot of the Stats & Transit UI](https://github.com/bryon82/Sail-a-dex/blob/main/Screenshots/statsUI.jpg)
 A UI showing various stats and transit times between region capital cities.
+Cargo mass is is the mass some of all crates, barrels, and packages.
 Cargo mass stat "Record" will be recorded once you are a certain distance from land.
-Cargo mass is only the items in crates, barrels, and packages.
+The starting time for transits are tracked from when you leave a capital city. This time will be used for when you moor at other capital cities 
+(only the first time mooring at a destintation capital city from the origin captial city will be recorded, i.e. You leave Gold Rock City, only the first time reaching Dragon Cliffs will be recorded). 
+You don't have to go directly to another capital city, you can stop other ports along the way.  
 If you use PassageDude mod and book travel or teleport via console that will reset your currently tracked transits.
 
 ## Notifications
@@ -45,4 +48,4 @@ Notifications will pop up along with a ship bell sound on badges earned and fast
 
 ## Installation
 Place the Sail-a-dex folder (not the contents, the whole thing) into the Sailwind/BepInEx/Plugins folder.  
-If upgrading from v1.0.0 delete the old Sail-a-dex from the BepInEx/plugins folder first.
+If upgrading from v1.0.0 delete the old Sail-a-dex.dll from the BepInEx/plugins folder first.
