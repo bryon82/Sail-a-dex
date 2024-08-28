@@ -66,31 +66,6 @@ namespace sailadex
         [HarmonyPatch(typeof(PickupableBoatMooringRope))]
         private class PickupableBoatMooringRopePatches
         {
-            //[HarmonyPrefix]
-            //[HarmonyPatch("Unmoor")]
-            //public static void UnmoorPrePatch(Rigidbody ___boatRigidbody, out string __state)
-            //{
-            //    __state = ___boatRigidbody.gameObject.GetComponent<BoatMooringRopes>().ropes
-            //        .Where(r => r.GetPrivateField<SpringJoint>("mooredToSpring") != null)
-            //        .Select(r => r.GetPrivateField<SpringJoint>("mooredToSpring").transform.parent.name)
-            //        .FirstOrDefault();
-            //}
-
-            //[HarmonyPostfix]
-            //[HarmonyPatch("Unmoor")]
-            //public static void UnmoorPatch(Rigidbody ___boatRigidbody, string __state)
-            //{
-            //    if (Plugin.statsUIEnabled.Value && !GameState.currentlyLoading && GameState.playing
-            //        && (___boatRigidbody.transform == GameState.lastBoat || ___boatRigidbody.transform == GameState.currentBoat?.parent)
-            //        && !___boatRigidbody.gameObject.GetComponent<BoatMooringRopes>().AnyRopeMoored())
-            //    {
-
-            //        Plugin.logger.LogInfo($"Unmoor from {__state} Day: {GameState.day} Time: {Sun.sun.globalTime}");
-            //        Plugin.logger.LogInfo($"LastBoat: {GameState.lastBoat} CurrentBoat: {GameState.currentBoat?.parent}");
-            //        StatsUI.instance.RegisterUnderway(__state);
-                    
-            //    }
-            //}
 
             [HarmonyPrefix]
             [HarmonyPatch("OnPickup")]
@@ -109,11 +84,8 @@ namespace sailadex
                 if (Plugin.statsUIEnabled.Value && !GameState.currentlyLoading && GameState.playing
                     && !___boatRigidbody.gameObject.GetComponent<BoatMooringRopes>().AnyRopeMoored())
                 {
-
                     Plugin.logger.LogInfo($"Unmoor from {__state} Day: {GameState.day} Time: {Sun.sun.globalTime}");
-                    Plugin.logger.LogInfo($"LastBoat: {GameState.lastBoat} CurrentBoat: {GameState.currentBoat?.parent}");
                     StatsUI.instance.RegisterUnderway(__state);
-
                 }
             }
 
