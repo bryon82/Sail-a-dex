@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v1.1.0] - 2024-08-13
+## [v1.2.0] - 2024-08-27
 
 ### Added
 - Stats & Transit UI.
