@@ -367,7 +367,7 @@ namespace sailadex
                 GameObject transitTextGO = GameObject.Instantiate(statsTextGO, statsTextGO.transform.parent);
                 transitTextGO.name = "transit times header";
                 transitTextGO.GetComponent<TextMesh>().text = "Transit Times         Last                            Record";
-                transitTextGO.transform.localPosition = new Vector3(0.08f, 0.24f, -0.007f);
+                transitTextGO.transform.localPosition = new Vector3(0.12f, 0.24f, -0.007f);
                 UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(4).gameObject);
                 UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(3).gameObject);
                 UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(2).gameObject);
@@ -378,7 +378,7 @@ namespace sailadex
 
             private static void AddTrackedStat(GameObject templateGO, string name, float yPos, Dictionary<string, TextMesh> statTMs, bool ltime = false, bool transit = false)
             {
-                var xPos = transit ? 0.08f : 0.82f;
+                var xPos = transit ? 0.12f : 0.82f;
                 var preText = transit ? "last" : "current";
                 GameObject newTextGO = GameObject.Instantiate(templateGO);
                 UnityEngine.Object.Destroy(newTextGO.transform.GetChild(4).gameObject);
