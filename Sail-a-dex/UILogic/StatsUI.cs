@@ -13,6 +13,8 @@ namespace sailadex
         public Dictionary<string, int> intStats;
         public Dictionary<string, bool[]> boolArrayStats;
         public Dictionary<string, TextMesh> statTMs;
+        private Vector3 lastPosition;
+        private string lastPortVisited;
 
         private void Awake()
         {
@@ -21,6 +23,8 @@ namespace sailadex
             intStats = new Dictionary<string, int>();
             boolArrayStats = new Dictionary<string, bool[]>();
             statTMs = new Dictionary<string, TextMesh>();
+            lastPosition = new Vector3();
+            lastPortVisited = "";
 
             foreach (string stat in Names.floatStatNames)
             {
@@ -246,6 +250,13 @@ namespace sailadex
                         statTMs["currentCargoMass"].text = floatStats["currentCargoMass"] == 0f ? "-" : $"{floatStats["currentCargoMass"]:#,##0.#} lbs";
                         statTMs["recordCargoMass"].text = floatStats["recordCargoMass"] == 0f ? "-" : $"{floatStats["recordCargoMass"]:#,##0.#} lbs";
                         break;
+                    case "MilesSailed":
+                        statTMs[stat].text = AddSpace(stat);
+                        if (Plugin.realTimeMilesSailed.Value)
+                            statTMs["currentMilesSailed"].text = $"{floatStats["currentMilesSailed"]:#,##0.#}";
+                        else
+                            statTMs["currentMilesSailed"].text = $"{floatStats["MilesSailed"]:#,##0.#}";
+                        break;
                     default:
                         statTMs[stat].text = AddSpace(stat);
                         statTMs["current" + stat].text = floatStats["current" + stat].ToString();
@@ -313,6 +324,32 @@ namespace sailadex
                     j++;
                 }
             }
+        }
+
+        public void TrackDistance()
+        {
+            var currentPosition = new Vector3(GameState.currentBoat.position.x, 0f, GameState.currentBoat.position.z);
+            if (Mathf.Abs(lastPosition.x) < 0.1f || Mathf.Abs(lastPosition.z) < 0.1f)
+            {
+                Plugin.logger.LogDebug($"World Shift: x {lastPosition.x} z: {lastPosition.z}");
+                lastPosition = currentPosition;                
+                return;
+            }
+
+            floatStats["currentMilesSailed"] += Vector3.Distance(lastPosition, currentPosition) / 300f;
+            lastPosition = currentPosition;
+        }
+
+        public void UpdateMilesText()
+        {
+            floatStats["MilesSailed"] = floatStats["currentMilesSailed"]; 
+        }
+
+        public void IncrementPortVisited(string port)
+        {
+            if (lastPortVisited == port) return;
+            IncrementIntStat("PortsVisited");
+            lastPortVisited = port;
         }
     }
 }

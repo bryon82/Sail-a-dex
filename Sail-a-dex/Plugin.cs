@@ -29,7 +29,8 @@ namespace sailadex
         internal static ConfigEntry<bool> portsVisitedUIEnabled;
         internal static ConfigEntry<bool> statsUIEnabled;
         internal static ConfigEntry<bool> notificationsEnabled;
-        internal static ConfigEntry<float> notificationSoundVolume;        
+        internal static ConfigEntry<float> notificationSoundVolume;
+        internal static ConfigEntry<bool> realTimeMilesSailed;
 
         internal static Harmony harmony;
 
@@ -43,7 +44,8 @@ namespace sailadex
             portsVisitedUIEnabled = Config.Bind("Settings", "Enable Ports Visited UI", true, "true = UI for which ports you have visited will be enabled. Setting to false, continuing a game where previously enabled, and then saving will erase all previous port visit progress.");
             statsUIEnabled = Config.Bind("Settings", "Enable Stats UI", true, "true = UI for various stats will be enabled. Setting to false, continuing a game where previously enabled, and then saving will erase all previously recorded stats.");
             notificationsEnabled = Config.Bind("Settings", "Enable Notifications", true, "true = notifications on badge earned will be enabled.");
-            notificationSoundVolume = Config.Bind("Settings", "Notification Volume", 0.2f, "Above 1f is loud and not recommended. Set to 0f to disable");
+            notificationSoundVolume = Config.Bind("Settings", "Notification Volume", 0.2f, "Above 1f is loud and not recommended. Set to 0f to disable.");
+            realTimeMilesSailed = Config.Bind("Settings", "Miles Sailed Updated in Real Time", false, "false = miles sailed text will be updated in the stats & transit UI once moored. true = miles sailed text will be updated while sailing.");
 
             harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PLUGIN_GUID);
 

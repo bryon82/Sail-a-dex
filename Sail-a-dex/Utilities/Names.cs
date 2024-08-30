@@ -105,12 +105,14 @@ namespace sailadex
         public static string[] floatStatNames =
         {
             "CargoMass",
-            "UnderwayTime"
+            "UnderwayTime",
+            "MilesSailed"
         };
 
         public static string[] intStatNames =
         {
             "UnderwayDay",
+            "PortsVisited",
             "MissionsCompleted",
             "DrinksTaken",
             "FoodsEaten",

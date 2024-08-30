@@ -326,7 +326,9 @@ namespace sailadex
                 AddTrackedStat(statsTextGO, "CargoMass", 0.205f, statTMs);
                 AddTrackedStat(statsTextGO, "UnderwayTime", 0.205f - 0.035f, statTMs);
 
-                int j = 1;
+
+                AddTrackedStat(statsTextGO, "MilesSailed", -0.035f, statTMs, true);
+                int j = 2;
                 foreach (string ltStat in Names.intStatNames)
                 {
                     if (ltStat == "UnderwayDay") continue;
@@ -373,6 +375,8 @@ namespace sailadex
                 UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(2).gameObject);
                 UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(1).gameObject);
                 UnityEngine.Object.Destroy(transitTextGO.transform.GetChild(0).gameObject);
+                
+                Plugin.logger.LogInfo("Loaded stats & transit UI");
             }
 
 
@@ -448,73 +452,74 @@ namespace sailadex
         //    [HarmonyPatch("Update")]
         //    public static void UpdatePatch(OceanFishes __instance)
         //    {
-        //        if (Input.GetKeyDown("p"))
-        //        {
+        //        //if (Input.GetKeyDown("p"))
+        //        //{
 
-        //            //StatsUI.instance.RegisterMoored("island 9 E (dragon cliffs)");
-        //            Debug.Log("Distance to land: " + GameState.distanceToLand);
-        //            Debug.Log("Distance to land: " + GameState.distanceToLand);
-        //            Debug.Log("DebugFishCatch: " + __instance.GetFish(Utilities.PlayerTransform).name);
-        //            for (int i = 0; i < 5; i++)
-        //                FishCaughtUI.instance.RegisterCatch(__instance.GetFish(Utilities.PlayerTransform).name);
+        //        //    //StatsUI.instance.RegisterMoored("island 9 E (dragon cliffs)");
+        //        //    Debug.Log("Distance to land: " + GameState.distanceToLand);
+        //        //    Debug.Log("Distance to land: " + GameState.distanceToLand);
+        //        //    Debug.Log("DebugFishCatch: " + __instance.GetFish(Utilities.PlayerTransform).name);
+        //        //    for (int i = 0; i < 5; i++)
+        //        //        FishCaughtUI.instance.RegisterCatch(__instance.GetFish(Utilities.PlayerTransform).name);
 
-        //            string[] ports = { "Gold Rock City",
-        //                                    "Al'Nilem",
-        //                                    //"Neverdin",
-        //                                    "Albacore Town",
-        //                                    "Alchemist's Island",
-        //                                    "Al'Ankh Academy",
-        //                                    "Oasis"
-        //                                    };
-        //            foreach (var port in ports)
-        //            {
-        //                Debug.Log("Debug visit: " + port);
-        //                PortsVisitedUI.instance.RegisterVisit(port);
-        //            }
-        //        }
-        //        if (Input.GetKeyDown("l"))
-        //        {
-        //            StatsUI.instance.RegisterMoored("island 15 M (Fort)");
-        //        }
+        //        //    string[] ports = { "Gold Rock City",
+        //        //                            "Al'Nilem",
+        //        //                            //"Neverdin",
+        //        //                            "Albacore Town",
+        //        //                            "Alchemist's Island",
+        //        //                            "Al'Ankh Academy",
+        //        //                            "Oasis"
+        //        //                            };
+        //        //    foreach (var port in ports)
+        //        //    {
+        //        //        Debug.Log("Debug visit: " + port);
+        //        //        PortsVisitedUI.instance.RegisterVisit(port);
+        //        //    }
+        //        //}
+        //        //if (Input.GetKeyDown("l"))
+        //        //{
+        //        //    StatsUI.instance.RegisterMoored("island 15 M (Fort)");
+        //        //}
         //        if (Input.GetKeyDown("u"))
         //        {
-        //            Plugin.logger.LogInfo($"LastBoat: {GameState.lastBoat} CurrentBoat: {GameState.currentBoat?.parent}");
+        //            Plugin.logger.LogInfo($"CurrentBoat: {GameState.currentBoat} CurrentBoatPosition: {GameState.currentBoat?.position}");
+        //            //Plugin.logger.LogInfo($"LastBoat: {GameState.lastBoat} CurrentBoat: {GameState.currentBoat?.parent}");
         //            //StatsUI.instance.RegisterMoored("island 27 Lagoon Shipyard");
         //        }
-        //        if (Input.GetKeyDown("i"))
-        //        {
-        //            //StatsUI.instance.RegisterUnderway("island 1 A (gold rock)");
+        //        //if (Input.GetKeyDown("i"))
+        //        //{
+        //        //    //StatsUI.instance.RegisterUnderway("island 1 A (gold rock)");
 
-        //            Debug.Log($"Current Boat: {GameState.currentBoat} Last Boat: {GameState.lastBoat}");
-        //            string[] portNames = {
-        //                //Emerald Archipelago
-        //                "Dragon Cliffs",
-        //                "Sanctuary",
-        //                "Crab Beach",
-        //                "New Port",
-        //                "Sage Hills",
-        //                "Serpent Isle",
-        //                //Aestrin(medi)
-        //                "Fort Aestrin",
-        //                "Sunspire",
-        //                "Mount Malefic",
-        //                "Siren Song",
-        //                "Eastwind",
-        //                "Happy Bay",
-        //                "Chronos",
-        //                //Fire Fish Lagoon
-        //                "Kicia Bay",
-        //                "Fire Fish Town",
-        //                "On'na",
-        //                "Sen'na"
-        //            };
+        //        //    Debug.Log($"Current Boat: {GameState.currentBoat} Last Boat: {GameState.lastBoat}");
+        //        //    string[] portNames = {
+        //        //        //Emerald Archipelago
+        //        //        "Dragon Cliffs",
+        //        //        "Sanctuary",
+        //        //        "Crab Beach",
+        //        //        "New Port",
+        //        //        "Sage Hills",
+        //        //        "Serpent Isle",
+        //        //        //Aestrin(medi)
+        //        //        "Fort Aestrin",
+        //        //        "Sunspire",
+        //        //        "Mount Malefic",
+        //        //        "Siren Song",
+        //        //        "Eastwind",
+        //        //        "Happy Bay",
+        //        //        "Chronos",
+        //        //        //Fire Fish Lagoon
+        //        //        "Kicia Bay",
+        //        //        "Fire Fish Town",
+        //        //        "On'na",
+        //        //        "Sen'na"
+        //        //    };
 
-        //            foreach (var port in portNames)
-        //            {
-        //                Debug.Log("Debug visit: " + port);
-        //                PortsVisitedUI.instance.RegisterVisit(port);
-        //            }
-        //        }
+        //        //    foreach (var port in portNames)
+        //        //    {
+        //        //        Debug.Log("Debug visit: " + port);
+        //        //        PortsVisitedUI.instance.RegisterVisit(port);
+        //        //    }
+        //        //}
         //    }
         //}
     }

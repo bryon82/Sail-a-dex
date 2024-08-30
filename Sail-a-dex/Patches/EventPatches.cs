@@ -29,6 +29,10 @@ namespace sailadex
             {
                 if (Plugin.portsVisitedUIEnabled.Value && other.CompareTag("Player"))
                     PortsVisitedUI.instance.RegisterVisit(___market.GetPortName());
+                if (Plugin.statsUIEnabled.Value && other.CompareTag("Player"))
+                    StatsUI.instance.IncrementPortVisited(___market.GetPortName());
+                
+                    
             }
         }
 
@@ -84,7 +88,7 @@ namespace sailadex
                 if (Plugin.statsUIEnabled.Value && !GameState.currentlyLoading && GameState.playing
                     && !___boatRigidbody.gameObject.GetComponent<BoatMooringRopes>().AnyRopeMoored())
                 {
-                    Plugin.logger.LogInfo($"Unmoor from {__state} Day: {GameState.day} Time: {Sun.sun.globalTime}");
+                    Plugin.logger.LogDebug($"Unmoor from {__state} Day: {GameState.day} Time: {Sun.sun.globalTime}");
                     StatsUI.instance.RegisterUnderway(__state);
                 }
             }
@@ -97,13 +101,13 @@ namespace sailadex
                     && (___boatRigidbody.transform == GameState.lastBoat || ___boatRigidbody.transform == GameState.currentBoat?.parent)
                     && ___boatRigidbody.gameObject.GetComponent<BoatMooringRopes>().AnyRopeMoored())
                 {
-                    //var boat = ___boatRigidbody.gameObject == GameState.currentBoat.parent || GameState.lastBoat;
                     var islandName = ___boatRigidbody.gameObject.GetComponent<BoatMooringRopes>().ropes
                         .Where(r => r.GetPrivateField<SpringJoint>("mooredToSpring") != null)
                         .Select(r => r.GetPrivateField<SpringJoint>("mooredToSpring").transform.parent.name)
                         .FirstOrDefault();
-                    Plugin.logger.LogInfo($"Moored at: {islandName} Day: {GameState.day} Time: {Sun.sun.globalTime} ");
+                    Plugin.logger.LogDebug($"Moored at: {islandName} Day: {GameState.day} Time: {Sun.sun.globalTime} ");
                     StatsUI.instance.RegisterMoored(islandName);
+                    StatsUI.instance.UpdateMilesText();
                 }
             }
         }
@@ -178,6 +182,18 @@ namespace sailadex
                 if (Plugin.statsUIEnabled.Value && ___teleportPlayer)
                     StatsUI.instance.PlayerTeleported();
             }
-        }        
+        }
+
+        [HarmonyPatch(typeof(BoatMass))]
+        private class BoatMassPatches
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch("FixedUpdate")]
+            public static void FixedUpdatePatch()
+            {
+                if (Plugin.statsUIEnabled.Value && GameState.currentBoat != null)
+                    StatsUI.instance.TrackDistance();
+            }
+        }
     }
 }

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.1] - 2024-08-29
+
+### Added
+- Miles sailed to lifetime stats
+- Ports visited to lifetime stats
+
 ## [v1.2.0] - 2024-08-27
 
 ### Added
