@@ -254,7 +254,7 @@ namespace sailadex
                         break;
                     case "MilesSailed":
                         statTMs[stat].text = AddSpace(stat);
-                        if (Plugin.realTimeMilesSailed.Value)
+                        if (Plugin.updateMilesSailed.Value == "realtime")
                             statTMs["currentMilesSailed"].text = $"{floatStats["currentMilesSailed"]:#,##0.#}";
                         else
                             statTMs["currentMilesSailed"].text = $"{floatStats["MilesSailed"]:#,##0.#}";

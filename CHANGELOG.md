@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.2] - 2024-08-31
+
+### Added
+- Config option to update miles sailed text on sleep
+
 ## [v1.2.1] - 2024-08-29
 
 ### Added

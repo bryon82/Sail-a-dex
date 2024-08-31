@@ -156,7 +156,12 @@ namespace sailadex
             public static void EnterBedPatch()
             {
                 if (Plugin.statsUIEnabled.Value)
+                {
                     StatsUI.instance.IncrementIntStat("TimesSlept");
+
+                    if (Plugin.updateMilesSailed.Value == "sleep")
+                        StatsUI.instance.UpdateMilesText();
+                }
             }
         }
 
