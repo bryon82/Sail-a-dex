@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Miles sailed to lifetime stats
 - Ports visited to lifetime stats
 
+### Fixed
+- NullRef when loading game off of ship and trying to sell an item
+
 ## [v1.2.0] - 2024-08-27
 
 ### Added
