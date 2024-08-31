@@ -58,6 +58,8 @@ namespace sailadex
 
         public void RegisterCurrentMass()
         {
+            if (GameState.currentBoat?.parent == null && GameState.lastBoat == null) return;
+
             var boatGameObject = GameState.currentBoat != null ? GameState.currentBoat.parent.gameObject : GameState.lastBoat.gameObject;  
             floatStats["currentCargoMass"] = boatGameObject
                 .GetComponent<BoatMass>()
