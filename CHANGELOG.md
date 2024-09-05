@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.2.3] - 2024-09-04
+
+### Changed
+- Miles sailed calculation
+
+### Fixed
+- Negative transit hours bug
+- Record underway time calculation bug
+
 ## [v1.2.2] - 2024-08-31
 
 ### Added
