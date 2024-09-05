@@ -5,8 +5,6 @@ using BepInEx.Logging;
 using SailwindModdingHelper;
 using BepInEx.Configuration;
 using BepInEx.Bootstrap;
-using static System.Net.Mime.MediaTypeNames;
-using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine;
 
 namespace sailadex

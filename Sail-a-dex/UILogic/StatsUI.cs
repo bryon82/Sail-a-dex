@@ -15,6 +15,7 @@ namespace sailadex
         public Dictionary<string, TextMesh> statTMs;
         private Vector3 lastPosition;
         private string lastPortVisited;
+        private int trackerTimer;
 
         private void Awake()
         {
@@ -25,6 +26,7 @@ namespace sailadex
             statTMs = new Dictionary<string, TextMesh>();
             lastPosition = new Vector3();
             lastPortVisited = "";
+            trackerTimer = 1000;
 
             foreach (string stat in Names.floatStatNames)
             {
@@ -76,6 +78,9 @@ namespace sailadex
             if (islandName == null || islandName == "")
                 return;
 
+            if (floatStats["recordCargoMass"] < floatStats["currentCargoMass"])            
+                floatStats["recordCargoMass"] = floatStats["currentCargoMass"];            
+
             floatStats["UnderwayTime"] = Sun.sun.globalTime;
             intStats["UnderwayDay"] = GameState.day;
 
@@ -123,6 +128,8 @@ namespace sailadex
         {
             if (islandName == null || islandName == "")
                 return;
+
+            UpdateStats();
 
             if (intStats["currentUnderwayDay"] > intStats["recordUnderwayDay"] 
                 || (intStats["currentUnderwayDay"] == intStats["recordUnderwayDay"]
@@ -181,15 +188,15 @@ namespace sailadex
         {
             var transitDay = GameState.day - intStats[underwayKey + "UnderwayDay"];
             var transitTime = Sun.sun.globalTime - floatStats[underwayKey + "UnderwayTime"];
-            intStats["last" + transitCode + "TransitDay"] = transitDay;
-            floatStats["last" + transitCode + "TransitTime"] = transitTime;
-
-
+            
             if (transitTime < 0f)
             {
                 transitTime += 24f;
                 transitDay--;
             }
+
+            intStats["last" + transitCode + "TransitDay"] = transitDay;
+            floatStats["last" + transitCode + "TransitTime"] = transitTime;
 
             if ((intStats["record" + transitCode + "TransitDay"] == 0
                 && floatStats["record" + transitCode + "TransitTime"] == 0f)
@@ -219,11 +226,6 @@ namespace sailadex
 
         private void UpdateStats()
         {
-            if (floatStats["recordCargoMass"] < floatStats["currentCargoMass"] && GameState.distanceToLand > 300f)
-            {
-                floatStats["recordCargoMass"] = floatStats["currentCargoMass"];
-            }
-
             if (intStats["UnderwayDay"] > 0 || floatStats["UnderwayTime"] > 0f)
             {
                 intStats["currentUnderwayDay"] = GameState.day - intStats["UnderwayDay"];
@@ -329,17 +331,23 @@ namespace sailadex
         }
 
         public void TrackDistance()
-        {
-            var currentPosition = new Vector3(GameState.currentBoat.position.x, 0f, GameState.currentBoat.position.z);
-            if (Mathf.Abs(lastPosition.x) < 0.1f || Mathf.Abs(lastPosition.z) < 0.1f)
+        {                     
+            var globePosition = FloatingOriginManager.instance.GetGlobeCoords(GameState.currentBoat);
+            var currentPosition = new Vector3(globePosition.x, 0f, globePosition.z);
+            if (lastPosition == Vector3.zero)
             {
-                Plugin.logger.LogDebug($"World Shift: x {lastPosition.x} z: {lastPosition.z}");
-                lastPosition = currentPosition;                
+                lastPosition = currentPosition;
+                return;
+            }
+            if (trackerTimer > 1)
+            {
+                trackerTimer -= 1;
                 return;
             }
 
-            floatStats["currentMilesSailed"] += Vector3.Distance(lastPosition, currentPosition) / 300f;
+            floatStats["currentMilesSailed"] += Vector3.Distance(lastPosition, currentPosition) * 61;
             lastPosition = currentPosition;
+            trackerTimer = 1000;
         }
 
         public void UpdateMilesText()
