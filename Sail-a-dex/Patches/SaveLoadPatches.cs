@@ -1,8 +1,10 @@
 ﻿using HarmonyLib;
 using SailwindModdingHelper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static sailadex.LogUIPatches;
 
 namespace sailadex
 {
@@ -15,7 +17,8 @@ namespace sailadex
             [HarmonyPatch("SaveModData")]
             public static void DoSaveGamePatch()
             {
-                var saveContainer = new LogUIPatches.RaddudeSaveContainer();
+                //var saveContainer = new LogUIPatches.RaddudeSaveContainer();
+                var saveContainer = new SailadexSaveContainer();
 
                 if (Plugin.fishCaughtUIEnabled.Value)
                 {
@@ -62,11 +65,34 @@ namespace sailadex
             [HarmonyPostfix]
             public static void LoadModDataPatch()
             {
-                if (!ModSave.Load(Plugin.instance.Info, out LogUIPatches.RaddudeSaveContainer saveContainer))
-                {                    
-                    Plugin.logger.LogWarning("Save file loading failed. File is either corrupt or does not exist. If this is the first time loading this save with this mod, this is normal.");
-                    return;                                        
+                //if (!ModSave.Load(Plugin.instance.Info, out SailadexSaveContainer saveContainer))
+                if (!ModSave.Load(Plugin.instance.Info, out object objSaveContainer))
+                { 
+                    Plugin.logger.LogWarning("Save file loading failed. If this is the first time loading this save with this mod, this is normal.");
+                    return;                                                                          
                 }
+
+                // convert save containers
+                // TODO: remove in next minor version
+                SailadexSaveContainer saveContainer;
+                if (objSaveContainer.GetType() == typeof(RaddudeSaveContainer))
+                {
+                    Plugin.logger.LogDebug("Converting save container");
+                    RaddudeSaveContainer oldSaveContainer = (RaddudeSaveContainer)objSaveContainer;
+                    saveContainer = new SailadexSaveContainer()
+                    {
+                        caughtFish = oldSaveContainer.caughtFish,
+                        visitedPorts = oldSaveContainer.visitedPorts,
+                        fishBadges = oldSaveContainer.fishBadges,
+                        portBadges = oldSaveContainer.portBadges,
+                        floatStats = oldSaveContainer.floatStats,
+                        intStats = oldSaveContainer.intStats,
+                        boolArrayStats = oldSaveContainer.boolArrayStats
+                    };
+                }
+                else
+                    saveContainer = (SailadexSaveContainer)objSaveContainer;
+
                 if (Plugin.fishCaughtUIEnabled.Value)
                 {
                     if (saveContainer.caughtFish != null)
@@ -80,9 +106,9 @@ namespace sailadex
                     }
 
                     // for 1.0.0 saves that didn't have badges yet
-                    var oceanFishPrefabs = OceanFishes.instance.GetPrivateField<GameObject[]>("fishPrefabs");
-                    foreach (GameObject fish in oceanFishPrefabs)
-                        FishCaughtUI.instance.CheckIndividualFishBadges(fish.name);
+                    // TODO: remove in next minor version
+                    foreach (string fishName in Names.fishNames)
+                        FishCaughtUI.instance.CheckIndividualFishBadges(fishName);
                     FishCaughtUI.instance.CheckAllFishBadges();
                 }
 
@@ -99,6 +125,7 @@ namespace sailadex
                     }
 
                     // for 1.0.0 saves that didn't have badges yet
+                    // TODO: remove in next minor version
                     PortsVisitedUI.instance.CheckBadges();
                 }
 
@@ -141,6 +168,18 @@ namespace sailadex
                     Plugin.logger.LogWarning($"LoadData: {item.Key} not found in game");
                 }                
             }
-        }
+        }        
+    }
+
+    [Serializable]
+    public class SailadexSaveContainer
+    {
+        public Dictionary<string, int> caughtFish;
+        public Dictionary<string, bool> visitedPorts;
+        public Dictionary<string, bool> fishBadges;
+        public Dictionary<string, bool> portBadges;
+        public Dictionary<string, float> floatStats;
+        public Dictionary<string, int> intStats;
+        public Dictionary<string, bool[]> boolArrayStats;
     }
 }

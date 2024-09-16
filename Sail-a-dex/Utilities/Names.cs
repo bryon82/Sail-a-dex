@@ -117,7 +117,9 @@ namespace sailadex
             "DrinksTaken",
             "FoodsEaten",
             "TimesSmoked",
-            "TimesSlept"            
+            "TimesSlept",
+            "FlotsamEncounters",
+            "SeaLifeEncounters"
         };
 
         public static string[] transitNames =
@@ -131,9 +133,9 @@ namespace sailadex
             "FaGrc",
             "FaDc",
             "FaKb",
-            "KbGrc",            
+            "KbGrc",
             "KbDc",
-            "KbFa" 
+            "KbFa"
         };
 
     }

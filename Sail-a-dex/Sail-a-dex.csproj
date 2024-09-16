@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compatability\PassageDude.cs" />
+    <Compile Include="Compatability\RandomEncounters.cs" />
     <Compile Include="Patches\EventPatches.cs" />
     <Compile Include="UILogic\FishCaughtUI.cs" />
     <Compile Include="Patches\LogUIPatches.cs" />

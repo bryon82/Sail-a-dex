@@ -34,6 +34,7 @@ The starting time for transits are tracked from when you leave a capital city. T
 (only the first time mooring at a destintation capital city from the origin captial city will be recorded, i.e. You leave Gold Rock City, only the first time reaching Dragon Cliffs will be recorded).  
 You don't have to go directly to another capital city, you can stop other ports along the way.  
 If you use PassageDude mod and book travel or teleport via console that will reset your currently tracked transits.  
+If you have RandomEncounters installed, Flotsam encounters will be tracked and, if you have the SeaLifeMod installed and controlled through RandomEncounters it, the SeaLife encounters will be tracked as well.
 
 ## Notifications
 

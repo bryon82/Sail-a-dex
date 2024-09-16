@@ -311,13 +311,13 @@ namespace sailadex
                 statsTextGO.GetComponent<TextMesh>().fontSize = 45;
                 statsTextGO.GetComponent<MeshRenderer>().material = statsTextGO.transform.GetChild(1).GetComponent<MeshRenderer>().material;
                 statsTextGO.transform.GetChild(0).gameObject.name = "current value";
-                statsTextGO.transform.GetChild(0).localPosition = new Vector3(38f, 0f, statsTextGO.transform.GetChild(1).localPosition[2]);
+                statsTextGO.transform.GetChild(0).localPosition = new Vector3(38f, 0f, 0f);
                 statsTextGO.transform.GetChild(0).GetComponent<TextMesh>().font = statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().font;
                 statsTextGO.transform.GetChild(0).GetComponent<TextMesh>().fontSize = 45;                
                 statsTextGO.transform.GetChild(0).GetComponent<TextMesh>().anchor = TextAnchor.MiddleLeft;
                 statsTextGO.transform.GetChild(0).GetComponent<MeshRenderer>().material = statsTextGO.transform.GetChild(1).GetComponent<MeshRenderer>().material;
                 statsTextGO.transform.GetChild(1).gameObject.name = "record value";
-                statsTextGO.transform.GetChild(1).localPosition = new Vector3(80f, 0f, statsTextGO.transform.GetChild(1).localPosition[2]);
+                statsTextGO.transform.GetChild(1).localPosition = new Vector3(80f, 0f, 0f);
                 statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().fontSize = 45;
                 statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().anchor = TextAnchor.MiddleLeft;
                 statsTextGO.transform.GetChild(1).GetComponent<TextMesh>().fontStyle = FontStyle.Normal;
@@ -327,11 +327,13 @@ namespace sailadex
                 AddTrackedStat(statsTextGO, "UnderwayTime", 0.205f - 0.035f, statTMs);
 
 
-                AddTrackedStat(statsTextGO, "MilesSailed", -0.035f, statTMs, true);
-                int j = 2;
+                AddTrackedStat(statsTextGO, "MilesSailed", 0.035f, statTMs, true);
+                int j = 0;
                 foreach (string ltStat in Names.intStatNames)
                 {
                     if (ltStat == "UnderwayDay") continue;
+                    if (ltStat == "FlotsamEncounters" && RandomEncounters.pluginInstance == null) continue;
+                    if (ltStat == "SeaLifeEncounters" && (RandomEncounters.pluginInstance == null || !RandomEncounters.isSeaLifeEnabled)) continue;
                     AddTrackedStat(statsTextGO, ltStat, -0.035f * j, statTMs, true);
                     j++;
                 }
@@ -359,7 +361,7 @@ namespace sailadex
                 GameObject ltStatsTextGO = GameObject.Instantiate(statsTextGO, statsTextGO.transform.parent);
                 ltStatsTextGO.name = "lifetime stats header";
                 ltStatsTextGO.GetComponent<TextMesh>().text = "Lifetime Stats";
-                ltStatsTextGO.transform.localPosition = new Vector3(0.82f, 0.0f, -0.007f);
+                ltStatsTextGO.transform.localPosition = new Vector3(0.82f, 0.07f, -0.007f);
                 UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(4).gameObject);
                 UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(3).gameObject);
                 UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(2).gameObject);
@@ -389,7 +391,10 @@ namespace sailadex
                 UnityEngine.Object.Destroy(newTextGO.transform.GetChild(3).gameObject);
                 UnityEngine.Object.Destroy(newTextGO.transform.GetChild(2).gameObject);
                 if (ltime)
+                {
                     UnityEngine.Object.Destroy(newTextGO.transform.GetChild(1).gameObject);
+                    newTextGO.transform.GetChild(0).localPosition = new Vector3(40f, 0f, 0f);
+                }                    
                 newTextGO.name = name;
                 newTextGO.transform.parent = templateGO.transform.parent;
                 newTextGO.transform.localPosition = new Vector3(xPos, yPos, templateGO.transform.localPosition[2]);
@@ -429,9 +434,7 @@ namespace sailadex
             }
         }           
 
-        // TODO: make a mod save solution that works with backups. SaveSlots class for ideas
-        // TODO: make a converter for this to a save container in SaveLoadPatches 
-        // have to keep RaddudeSaveContainer here with this name or else it breaks old saves
+        // TODO: Remove in next minor version
         [Serializable]
         public class RaddudeSaveContainer
         {

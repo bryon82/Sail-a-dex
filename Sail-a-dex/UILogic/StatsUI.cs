@@ -271,15 +271,12 @@ namespace sailadex
 
             foreach (string stat in Names.intStatNames)
             {                
-                switch (stat)
-                {
-                    case "UnderwayDay":
-                        break;
-                    default:
-                        statTMs[stat].text = AddSpace(stat);
-                        statTMs["current" + stat].text = $"{intStats["current" + stat]:#,##0}";
-                        break;
-                }
+                if (stat == "UnderwayDay") continue;                    
+                if (stat == "FlotsamEncounters" && RandomEncounters.pluginInstance == null) continue;
+                if (stat == "SeaLifeEncounters" && (RandomEncounters.pluginInstance == null || !RandomEncounters.isSeaLifeEnabled)) continue;
+
+                statTMs[stat].text = AddSpace(stat);
+                statTMs["current" + stat].text = $"{intStats["current" + stat]:#,##0}";                
             }
 
             foreach (string transit in Names.transitNames)

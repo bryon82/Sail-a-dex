@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.3.0] - 2024-09-16
+
+### Added
+- ModSave Backups dependency to generate backups of the save data from this mod
+- Tie in with RandomEncounters if installed to track the number of Flotsam encounters and, if installed and controlled from RandomEncounters, SeaLife encounters
+
+### Changed
+- The SaveContainer type and location with converter added
+
 ## [v1.2.3] - 2024-09-04
 
 ### Changed
