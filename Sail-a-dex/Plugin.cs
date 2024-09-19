@@ -2,10 +2,8 @@
 using BepInEx;
 using HarmonyLib;
 using BepInEx.Logging;
-using SailwindModdingHelper;
 using BepInEx.Configuration;
 using BepInEx.Bootstrap;
-using UnityEngine;
 
 namespace sailadex
 {
@@ -18,18 +16,14 @@ namespace sailadex
     {
         public const string PLUGIN_GUID = "com.raddude82.sailadex";
         public const string PLUGIN_NAME = "Sail-A-Dex";
-        public const string PLUGIN_VERSION = "1.3.0";
+        public const string PLUGIN_VERSION = "1.3.1";
 
         public const string SMH_GUID = "com.app24.sailwindmoddinghelper";
-        public const string SMH_VERSION = "2.0.3";
+        public const string SMH_VERSION = "2.1.1";
         public const string MODSAVEBACKUPS_GUID = "com.raddude82.modsavebackups";
-        public const string MODSAVEBACKUPS_VERSION = "1.0.1";
+        public const string MODSAVEBACKUPS_VERSION = "1.0.2";
         public const string PASSAGEDUDE_GUID = "pr0skynesis.passagedude";
         public const string RANDOMENCOUNTERS_GUID = "com.raddude82.randomencounters";        
-
-        internal static Plugin instance;
-        internal static ManualLogSource logger;
-        internal static Harmony harmony;
 
         internal static ConfigEntry<bool> fishNamesHidden;
         internal static ConfigEntry<bool> portNamesHidden;
@@ -38,13 +32,14 @@ namespace sailadex
         internal static ConfigEntry<bool> statsUIEnabled;
         internal static ConfigEntry<bool> notificationsEnabled;
         internal static ConfigEntry<float> notificationSoundVolume;
-        internal static ConfigEntry<string> updateMilesSailed;        
+        internal static ConfigEntry<string> updateMilesSailed;
+
+        internal static Plugin instance;
+        internal static ManualLogSource logger;
+        internal static Harmony harmony;
 
         private void Awake()
-        {
-            instance = this;
-            logger = Logger;
-
+        {            
             fishNamesHidden = Config.Bind("Settings", "Hide Fish Names Before Caught", true, "true = fish names will be hidden before being caught for the first time.");
             portNamesHidden = Config.Bind("Settings", "Hide Port Names Before Visited", false, "true = port names will be hidden before visited for the first time.");
             fishCaughtUIEnabled = Config.Bind("Settings", "Enable Fish Caught UI", true, "true = UI for how many fish you caught will be enabled. Setting to false, continuing a game where previously enabled, and then saving will erase all previous fish caught progress.");
@@ -54,6 +49,8 @@ namespace sailadex
             notificationSoundVolume = Config.Bind("Settings", "Notification Volume", 0.2f, "Above 1f is loud and not recommended. Set to 0f to disable.");
             updateMilesSailed = Config.Bind("Settings", "Miles Sailed Updates", "moored", new ConfigDescription("Miles sailed text will be updated once moored, going to sleeping or moored, or in real time.", new AcceptableValueList<string>("moored", "sleep", "realtime")) );
 
+            instance = this;
+            logger = Logger;
             harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), PLUGIN_GUID);
 
             foreach (var plugin in Chainloader.PluginInfos)
@@ -71,13 +68,6 @@ namespace sailadex
                     RandomEncounters.PatchMod();
                 }
             }            
-        }
-
-        private void OnDestroy()
-        {
-            logger.LogInfo($"Destroying and unpatching {PLUGIN_GUID}");
-            LogUIPatches.UnloadResources();
-            harmony.UnpatchSelf();            
         }
     }
 }

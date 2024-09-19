@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.3.1] - 2024-09-18
+
+### Added
+- Weathered Storms to Lifetime stats
+- Fire Fish Lagoon fish to the fish caught log along with associated badges
+
+### Fixed
+- Fire Fish Lagoon fish were missing from the list of fish which was also causing a bug when collecting one of those fish
+
 ## [v1.3.0] - 2024-09-16
 
 ### Added

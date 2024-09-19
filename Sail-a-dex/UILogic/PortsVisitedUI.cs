@@ -38,7 +38,7 @@ namespace sailadex
                 visitedPorts[portName] = true;
                 CheckBadges();
             }
-            //Debug.Log("Visited: " + portName);
+            Plugin.logger.LogDebug("Visited: " + portName);
         }
 
         public void UpdatePage()
@@ -57,7 +57,6 @@ namespace sailadex
                 else
                     portNameTMs[i].text = port.Key;
                 portVisitedTMs[i].text = port.Value ? "✓" : "✗";
-                //Debug.Log(port.Key + " " + port.Value);
                 i++;
             }
         }

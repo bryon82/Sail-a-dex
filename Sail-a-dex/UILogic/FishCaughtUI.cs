@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace sailadex
@@ -38,14 +39,22 @@ namespace sailadex
 
         public static string ShortFishName(string name)
         {
+            if (!Regex.IsMatch(name, @"^\d"))
+                return name;
             return name.Substring(3, name.IndexOf("(") - 4);
         }
 
-        public void RegisterCatch(string fishName)
+        public void RegisterCatch(GameObject fish)
         {
+            var fishName = fish.GetComponent<ShipItemFood>().name;
+            if (!caughtFish.ContainsKey(fishName))
+            {
+                Plugin.logger.LogWarning($"Fish caught {fishName} is not in fish caught log");
+                return;
+            }
             caughtFish[fishName]++;
             CheckBadges(fishName);
-            //Debug.Log("Caught: " + fishName);
+            Plugin.logger.LogDebug("Caught: " + fishName);
         }
 
         public void UpdatePage()
@@ -66,7 +75,6 @@ namespace sailadex
                     fishNameTMs[i].text = ShortFishName(fish.Key);
                 caughtCountTMs[i].text = fish.Value.ToString();
                 catchSum += fish.Value;
-                //Debug.Log(fish.Key + " " + fish.Value);
                 i++;
             }
             fishNameTMs[fishNameTMs.Length - 1].text = "Total";

@@ -1,4 +1,5 @@
-﻿using SailwindModdingHelper;
+﻿using BepInEx;
+using SailwindModdingHelper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -16,6 +17,7 @@ namespace sailadex
         private Vector3 lastPosition;
         private string lastPortVisited;
         private int trackerTimer;
+        private string lastStorm;
 
         private void Awake()
         {
@@ -27,6 +29,7 @@ namespace sailadex
             lastPosition = new Vector3();
             lastPortVisited = "";
             trackerTimer = 1000;
+            lastStorm = "";
 
             foreach (string stat in Names.floatStatNames)
             {
@@ -315,6 +318,7 @@ namespace sailadex
 
         public void PlayerTeleported()
         {
+            Plugin.logger.LogInfo("Player teleported, resetting current transits");
             foreach (string capital in Names.capitals)
             {
                 int j = 0;
@@ -358,5 +362,36 @@ namespace sailadex
             IncrementIntStat("PortsVisited");
             lastPortVisited = port;
         }
+
+        public void IncrementStormsWeathered()
+        {
+            var currentStorm = WeatherStorms.instance.GetCurrentStorm().name;
+            if (lastStorm == currentStorm)
+                return;
+
+            Plugin.logger.LogDebug($"Weathering {currentStorm}");
+            IncrementIntStat("StormsWeathered");
+            lastStorm = currentStorm;
+            
+        }
+
+        public void ClearLastStorm()
+        {
+            if (lastStorm.IsNullOrWhiteSpace())
+                return;
+
+            Plugin.logger.LogDebug($"Storm cleared");
+            lastStorm = "";
+        }
+
+        //public void Update()
+        //{
+        //    if (Input.GetKeyDown(KeyCode.P))
+        //    {
+        //        Plugin.logger.LogDebug($"LastBoat: {GameState.lastBoat} CurrentBoat: {GameState.currentBoat?.parent}");
+        //        var stormDistance = (WeatherStorms.currentStormDistance - WeatherStorms.instance.GetPrivateField<WanderingStorm>("currentStorm").GetRadius()) / WeatherStorms.instance.GetPrivateField<float>("currentStormRange");
+        //        Plugin.logger.LogDebug($"Storm distance: {stormDistance}");
+        //    }
+        //}
     }
 }

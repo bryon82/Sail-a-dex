@@ -1,5 +1,4 @@
-﻿using SailwindModdingHelper;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,16 +14,6 @@ namespace sailadex
         private const MissionListMode portsVisited = (MissionListMode)6;
         private const MissionListMode stats = (MissionListMode)7;
         private static Stack<float> bookmarkPos;
-
-        public static void UnloadResources()
-        {
-            if (Plugin.fishCaughtUIEnabled.Value)
-                UnityEngine.Object.Destroy(fishCaughtUI);
-            if (Plugin.portsVisitedUIEnabled.Value)
-                UnityEngine.Object.Destroy(portsVisitedUI);
-            if (Plugin.statsUIEnabled.Value)
-                UnityEngine.Object.Destroy(statsUI);
-        }
 
 
         [HarmonyPatch(typeof(MissionListUI))]
@@ -73,6 +62,7 @@ namespace sailadex
             [HarmonyPatch("Start")]
             public static void StartPatch(MissionListUI __instance, GameObject ___modeButtons, GameObject ___reputationUI)
             {
+                Names.fishNames.AddRange(Names.lagoonFish);
                 AssetsLoader.Start();
 
                 bookmarkPos = new Stack<float>();
@@ -130,19 +120,21 @@ namespace sailadex
                 fishCaughtTextGO.GetComponent<MeshRenderer>().material = fishCaughtTextGO.transform.GetChild(1).GetComponent<MeshRenderer>().material;
                 fishCaughtTextGO.transform.GetChild(1).gameObject.name = "caught count";
                 fishCaughtTextGO.transform.GetChild(1).localPosition = new Vector3(55f, 0f, fishCaughtTextGO.transform.GetChild(1).localPosition[2]);
-                TextMesh[] caughtCountTexts = new TextMesh[Names.fishNames.Length + 1];
-                TextMesh[] fishnameTexts = new TextMesh[Names.fishNames.Length + 1];
+                fishCaughtTextGO.transform.GetChild(1).GetComponent<TextMesh>().fontSize = 50;
+                TextMesh[] caughtCountTexts = new TextMesh[Names.fishNames.Count + 1];
+                TextMesh[] fishnameTexts = new TextMesh[Names.fishNames.Count + 1];
 
-                for (int i = 0; i < Names.fishNames.Length; i++)
+                for (int i = 0; i < Names.fishNames.Count; i++)
                 {
                     GameObject newFishCaughtTextGO = GameObject.Instantiate(fishCaughtTextGO);
                     UnityEngine.Object.Destroy(newFishCaughtTextGO.transform.GetChild(4).gameObject);
                     UnityEngine.Object.Destroy(newFishCaughtTextGO.transform.GetChild(3).gameObject);
                     UnityEngine.Object.Destroy(newFishCaughtTextGO.transform.GetChild(2).gameObject);
                     UnityEngine.Object.Destroy(newFishCaughtTextGO.transform.GetChild(0).gameObject);
+                    newFishCaughtTextGO.GetComponent<TextMesh>().fontSize = 50;
                     newFishCaughtTextGO.name = FishCaughtUI.ShortFishName(Names.fishNames[i]);
                     newFishCaughtTextGO.transform.parent = fishCaughtTextGO.transform.parent;
-                    newFishCaughtTextGO.transform.localPosition = new Vector3(0.8f, 0.22f - 0.045f * i, fishCaughtTextGO.transform.localPosition[2]);
+                    newFishCaughtTextGO.transform.localPosition = new Vector3(0.8f, 0.24f - 0.0375f * i, fishCaughtTextGO.transform.localPosition[2]);
                     newFishCaughtTextGO.transform.localRotation = fishCaughtTextGO.transform.localRotation;
                     newFishCaughtTextGO.transform.localScale = fishCaughtTextGO.transform.localScale;
                     fishnameTexts[i] = newFishCaughtTextGO.GetComponent<TextMesh>();
@@ -153,7 +145,7 @@ namespace sailadex
                     for (int j = 0; j < badgeNums.Length; j++)
                     {
                         var badgeName = newFishCaughtTextGO.name + badgeNums[j];
-                        var badge = CreateBadgeObject(badgeName, newFishCaughtTextGO.transform, new Vector3(14.75f, 14.75f, 1f), new Vector3(75f + j * 15f, 0f, 0f));
+                        var badge = CreateBadgeObject(badgeName, newFishCaughtTextGO.transform, new Vector3(12f, 12f, 1f), new Vector3(75f + j * 13f, 0f, 0f));
                         FishCaughtUI.instance.fishBadgeGOs.Add(badgeName, badge);
                     }
                 }
@@ -165,24 +157,25 @@ namespace sailadex
                 UnityEngine.Object.Destroy(totalCaughtTextGO.transform.GetChild(0).gameObject);
                 totalCaughtTextGO.name = "totalCaught";
                 totalCaughtTextGO.transform.parent = fishCaughtTextGO.transform.parent;
-                totalCaughtTextGO.transform.localPosition = new Vector3(0.8f, -0.19f, fishCaughtTextGO.transform.localPosition[2]);
+                totalCaughtTextGO.transform.localPosition = new Vector3(0.8f, -0.21f, fishCaughtTextGO.transform.localPosition[2]);
                 totalCaughtTextGO.transform.localRotation = fishCaughtTextGO.transform.localRotation;
                 totalCaughtTextGO.transform.localScale = fishCaughtTextGO.transform.localScale;
-                fishnameTexts[Names.fishNames.Length] = totalCaughtTextGO.GetComponent<TextMesh>();
-                caughtCountTexts[Names.fishNames.Length] = totalCaughtTextGO.transform.GetChild(1).GetComponent<TextMesh>();
+                fishnameTexts[Names.fishNames.Count] = totalCaughtTextGO.GetComponent<TextMesh>();
+                caughtCountTexts[Names.fishNames.Count] = totalCaughtTextGO.transform.GetChild(1).GetComponent<TextMesh>();
 
                 string[] totalCaughtBadges = { "caught50", "caught250", "caught500", "caughtAll" };
 
                 for (int j = 0; j < totalCaughtBadges.Length; j++)
                 {
                     var badgeName = totalCaughtBadges[j];
-                    var badge = CreateBadgeObject(badgeName, totalCaughtTextGO.transform, new Vector3(15f, 15f, 1f), new Vector3(15f + j * 20f, -15f, 0f));
+                    var badge = CreateBadgeObject(badgeName, totalCaughtTextGO.transform, new Vector3(15f, 15f, 1f), new Vector3(15f + j * 20f, -13f, 0f));
                     FishCaughtUI.instance.fishBadgeGOs.Add(badgeName, badge);
                 }
 
                 UnityEngine.Object.Destroy(fishCaughtTextGO);
                 FishCaughtUI.instance.fishNameTMs = fishnameTexts;
                 FishCaughtUI.instance.caughtCountTMs = caughtCountTexts;
+
                 Plugin.logger.LogInfo("Loaded fish caught UI");
             }
 
@@ -278,6 +271,7 @@ namespace sailadex
 
                 PortsVisitedUI.instance.portNameTMs = portNameTMs;
                 PortsVisitedUI.instance.portVisitedTMs = portVisitedTMs;
+
                 Plugin.logger.LogInfo("Loaded ports visited UI");
             }
 
@@ -326,15 +320,14 @@ namespace sailadex
                 AddTrackedStat(statsTextGO, "CargoMass", 0.205f, statTMs);
                 AddTrackedStat(statsTextGO, "UnderwayTime", 0.205f - 0.035f, statTMs);
 
-
-                AddTrackedStat(statsTextGO, "MilesSailed", 0.035f, statTMs, true);
+                AddTrackedStat(statsTextGO, "MilesSailed", 0.07f, statTMs, true);
                 int j = 0;
                 foreach (string ltStat in Names.intStatNames)
                 {
                     if (ltStat == "UnderwayDay") continue;
                     if (ltStat == "FlotsamEncounters" && RandomEncounters.pluginInstance == null) continue;
                     if (ltStat == "SeaLifeEncounters" && (RandomEncounters.pluginInstance == null || !RandomEncounters.isSeaLifeEnabled)) continue;
-                    AddTrackedStat(statsTextGO, ltStat, -0.035f * j, statTMs, true);
+                    AddTrackedStat(statsTextGO, ltStat, 0.035f - 0.035f * j, statTMs, true);
                     j++;
                 }
 
@@ -361,7 +354,7 @@ namespace sailadex
                 GameObject ltStatsTextGO = GameObject.Instantiate(statsTextGO, statsTextGO.transform.parent);
                 ltStatsTextGO.name = "lifetime stats header";
                 ltStatsTextGO.GetComponent<TextMesh>().text = "Lifetime Stats";
-                ltStatsTextGO.transform.localPosition = new Vector3(0.82f, 0.07f, -0.007f);
+                ltStatsTextGO.transform.localPosition = new Vector3(0.82f, 0.105f, -0.007f);
                 UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(4).gameObject);
                 UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(3).gameObject);
                 UnityEngine.Object.Destroy(ltStatsTextGO.transform.GetChild(2).gameObject);
@@ -455,75 +448,74 @@ namespace sailadex
         //    [HarmonyPatch("Update")]
         //    public static void UpdatePatch(OceanFishes __instance)
         //    {
-        //        //if (Input.GetKeyDown("p"))
-        //        //{
-
-        //        //    //StatsUI.instance.RegisterMoored("island 9 E (dragon cliffs)");
-        //        //    Debug.Log("Distance to land: " + GameState.distanceToLand);
-        //        //    Debug.Log("Distance to land: " + GameState.distanceToLand);
-        //        //    Debug.Log("DebugFishCatch: " + __instance.GetFish(Utilities.PlayerTransform).name);
-        //        //    for (int i = 0; i < 5; i++)
-        //        //        FishCaughtUI.instance.RegisterCatch(__instance.GetFish(Utilities.PlayerTransform).name);
-
-        //        //    string[] ports = { "Gold Rock City",
-        //        //                            "Al'Nilem",
-        //        //                            //"Neverdin",
-        //        //                            "Albacore Town",
-        //        //                            "Alchemist's Island",
-        //        //                            "Al'Ankh Academy",
-        //        //                            "Oasis"
-        //        //                            };
-        //        //    foreach (var port in ports)
-        //        //    {
-        //        //        Debug.Log("Debug visit: " + port);
-        //        //        PortsVisitedUI.instance.RegisterVisit(port);
-        //        //    }
-        //        //}
-        //        //if (Input.GetKeyDown("l"))
-        //        //{
-        //        //    StatsUI.instance.RegisterMoored("island 15 M (Fort)");
-        //        //}
-        //        if (Input.GetKeyDown("u"))
+        //        if (Input.GetKeyDown("p"))
         //        {
-        //            Plugin.logger.LogInfo($"CurrentBoat: {GameState.currentBoat} CurrentBoatPosition: {GameState.currentBoat?.position}");
-        //            //Plugin.logger.LogInfo($"LastBoat: {GameState.lastBoat} CurrentBoat: {GameState.currentBoat?.parent}");
-        //            //StatsUI.instance.RegisterMoored("island 27 Lagoon Shipyard");
-        //        }
-        //        //if (Input.GetKeyDown("i"))
-        //        //{
-        //        //    //StatsUI.instance.RegisterUnderway("island 1 A (gold rock)");
 
-        //        //    Debug.Log($"Current Boat: {GameState.currentBoat} Last Boat: {GameState.lastBoat}");
-        //        //    string[] portNames = {
-        //        //        //Emerald Archipelago
-        //        //        "Dragon Cliffs",
-        //        //        "Sanctuary",
-        //        //        "Crab Beach",
-        //        //        "New Port",
-        //        //        "Sage Hills",
-        //        //        "Serpent Isle",
-        //        //        //Aestrin(medi)
-        //        //        "Fort Aestrin",
-        //        //        "Sunspire",
-        //        //        "Mount Malefic",
-        //        //        "Siren Song",
-        //        //        "Eastwind",
-        //        //        "Happy Bay",
-        //        //        "Chronos",
-        //        //        //Fire Fish Lagoon
-        //        //        "Kicia Bay",
-        //        //        "Fire Fish Town",
-        //        //        "On'na",
-        //        //        "Sen'na"
-        //        //    };
+                    //        //    //StatsUI.instance.RegisterMoored("island 9 E (dragon cliffs)");
+                    //        //    Debug.Log("Distance to land: " + GameState.distanceToLand);
+                    //        //    Debug.Log("DebugFishCatch: " + __instance.GetFish(Utilities.PlayerTransform).name);
+                    //for (int i = 0; i < 5; i++)
+                    //    FishCaughtUI.instance.RegisterCatch(__instance.GetFish(Camera.main.transform));
 
-        //        //    foreach (var port in portNames)
-        //        //    {
-        //        //        Debug.Log("Debug visit: " + port);
-        //        //        PortsVisitedUI.instance.RegisterVisit(port);
-        //        //    }
-        //        //}
-        //    }
-        //}
-    }
-}
+                    //        //    string[] ports = { "Gold Rock City",
+                    //        //                            "Al'Nilem",
+                    //        //                            //"Neverdin",
+                    //        //                            "Albacore Town",
+                    //        //                            "Alchemist's Island",
+                    //        //                            "Al'Ankh Academy",
+                    //        //                            "Oasis"
+                    //        //                            };
+                    //        //    foreach (var port in ports)
+                    //        //    {
+                    //        //        Debug.Log("Debug visit: " + port);
+                    //        //        PortsVisitedUI.instance.RegisterVisit(port);
+                    //        //    }
+                    //        //}
+                    //        //if (Input.GetKeyDown("l"))
+                    //        //{
+                    //        //    StatsUI.instance.RegisterMoored("island 15 M (Fort)");
+                    //        //}
+                    //        if (Input.GetKeyDown("u"))
+                    //        {
+                    //            Plugin.logger.LogInfo($"CurrentBoat: {GameState.currentBoat} CurrentBoatPosition: {GameState.currentBoat?.position}");
+                    //            //Plugin.logger.LogInfo($"LastBoat: {GameState.lastBoat} CurrentBoat: {GameState.currentBoat?.parent}");
+                    //            //StatsUI.instance.RegisterMoored("island 27 Lagoon Shipyard");
+                    //        }
+                    //        //if (Input.GetKeyDown("i"))
+                    //        //{
+                    //        //    //StatsUI.instance.RegisterUnderway("island 1 A (gold rock)");
+
+                    //        //    Debug.Log($"Current Boat: {GameState.currentBoat} Last Boat: {GameState.lastBoat}");
+                    //        //    string[] portNames = {
+                    //        //        //Emerald Archipelago
+                    //        //        "Dragon Cliffs",
+                    //        //        "Sanctuary",
+                    //        //        "Crab Beach",
+                    //        //        "New Port",
+                    //        //        "Sage Hills",
+                    //        //        "Serpent Isle",
+                    //        //        //Aestrin(medi)
+                    //        //        "Fort Aestrin",
+                    //        //        "Sunspire",
+                    //        //        "Mount Malefic",
+                    //        //        "Siren Song",
+                    //        //        "Eastwind",
+                    //        //        "Happy Bay",
+                    //        //        "Chronos",
+                    //        //        //Fire Fish Lagoon
+                    //        //        "Kicia Bay",
+                    //        //        "Fire Fish Town",
+                    //        //        "On'na",
+                    //        //        "Sen'na"
+                    //        //    };
+
+                    //        //    foreach (var port in portNames)
+                    //        //    {
+                    //        //        Debug.Log("Debug visit: " + port);
+                    //        //        PortsVisitedUI.instance.RegisterVisit(port);
+                    //        //    }
+                    //        }
+                    //    }
+                    //}
+                }
+            }

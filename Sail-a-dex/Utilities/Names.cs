@@ -1,15 +1,17 @@
 ﻿using SailwindModdingHelper;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace sailadex
 {
-    internal class Names
+    internal static class Names
     {
-        public static string[] fishNames = OceanFishes.instance.GetPrivateField<GameObject[]>("fishPrefabs")
+        public static string[] lagoonFish = { "swamp snapper", "blue bubbler", "fire fish" };
+
+        public static List<string> fishNames = OceanFishes.instance.GetPrivateField<GameObject[]>("fishPrefabs")
             .Select(fish => fish.name)
-            .ToArray();
+            .ToList();
 
         public static string[] totalFishBadgeNames =
         {
@@ -118,6 +120,7 @@ namespace sailadex
             "FoodsEaten",
             "TimesSmoked",
             "TimesSlept",
+            "StormsWeathered",
             "FlotsamEncounters",
             "SeaLifeEncounters"
         };

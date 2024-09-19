@@ -1,5 +1,4 @@
-﻿using SailwindModdingHelper;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -20,7 +19,7 @@ namespace sailadex
 
         public static void LoadFishBadges()
         {
-            var fishBadgesPath = Path.Combine(Extensions.GetFolderLocation(Plugin.instance.Info), "assets", "badges", "fish");
+            var fishBadgesPath = Path.Combine(Path.GetDirectoryName(Plugin.instance.Info.Location), "assets", "badges", "fish");
             int[] amountNums = { 25, 50, 100 };
             Texture2D tempTexture;
             string fishBadgeName;
@@ -29,10 +28,8 @@ namespace sailadex
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    //Debug.Log("Start " + FishCaughtUI.ShortFishName(fish.name) + amountNums[i] + " load");
                     fishBadgeName = FishCaughtUI.ShortFishName(fishName) + amountNums[i];
                     tempTexture = LoadTexture(Path.Combine(fishBadgesPath, fishBadgeName + ".png"));
-                    //Debug.Log("Texture loaded, adding material");
                     textures.Add(fishBadgeName, tempTexture);
                     materials.Add(fishBadgeName, CreateMaterial(tempTexture));
                 }
@@ -40,10 +37,8 @@ namespace sailadex
 
             foreach (string caughtBadge in Names.totalFishBadgeNames)
             {                
-                //Debug.Log("Start " + caughtBadge + " load");
                 fishBadgeName = caughtBadge;
                 tempTexture = LoadTexture(Path.Combine(fishBadgesPath, fishBadgeName + ".png"));
-                //Debug.Log("Texture loaded, adding material");
                 textures.Add(fishBadgeName, tempTexture);
                 materials.Add(fishBadgeName, CreateMaterial(tempTexture));                
             }
@@ -53,7 +48,7 @@ namespace sailadex
 
         public static void LoadPortBadges()
         {
-            var portBadgesPath = Path.Combine(Extensions.GetFolderLocation(Plugin.instance.Info), "assets", "badges", "ports");
+            var portBadgesPath = Path.Combine(Path.GetDirectoryName(Plugin.instance.Info.Location), "assets", "badges", "ports");
             Texture2D tempTexture;
 
             foreach (string pbName in Names.portBadgeNames)
@@ -92,7 +87,7 @@ namespace sailadex
 
         public static void GetAudioClip(string fileName, List<AudioClip> audioClips)
         {
-            var clipPath = Path.Combine(Extensions.GetFolderLocation(Plugin.instance.Info), "assets", "sounds", fileName + ".wav");
+            var clipPath = Path.Combine(Path.GetDirectoryName(Plugin.instance.Info.Location), "assets", "sounds", fileName + ".wav");
             var webRequest = UnityWebRequestMultimedia.GetAudioClip($"file://{clipPath}", AudioType.WAV);
 
             webRequest.SendWebRequest();

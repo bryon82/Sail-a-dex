@@ -15,7 +15,7 @@ namespace sailadex
             public static void CollectFishPatch(FishingRodFish __instance, GameObject ___currentFish)
             {
                 if (Plugin.fishCaughtUIEnabled.Value)
-                    FishCaughtUI.instance.RegisterCatch(___currentFish.name);
+                    FishCaughtUI.instance.RegisterCatch(___currentFish);
             }
         }
 
@@ -85,7 +85,9 @@ namespace sailadex
             [HarmonyPatch("OnPickup")]
             public static void OnPickupPatch(Rigidbody ___boatRigidbody, string __state)
             {
-                if (Plugin.statsUIEnabled.Value && !GameState.currentlyLoading && GameState.playing
+                if (Plugin.statsUIEnabled.Value 
+                    && !GameState.currentlyLoading 
+                    && GameState.playing
                     && !___boatRigidbody.gameObject.GetComponent<BoatMooringRopes>().AnyRopeMoored())
                 {
                     Plugin.logger.LogDebug($"Unmoor from {__state} Day: {GameState.day} Time: {Sun.sun.globalTime}");
@@ -97,7 +99,9 @@ namespace sailadex
             [HarmonyPatch("MoorTo")]
             public static void MoorToPatch(Rigidbody ___boatRigidbody)
             {
-                if (Plugin.statsUIEnabled.Value && !GameState.currentlyLoading && GameState.playing
+                if (Plugin.statsUIEnabled.Value 
+                    && !GameState.currentlyLoading 
+                    && GameState.playing
                     && (___boatRigidbody.transform == GameState.lastBoat || ___boatRigidbody.transform == GameState.currentBoat?.parent)
                     && ___boatRigidbody.gameObject.GetComponent<BoatMooringRopes>().AnyRopeMoored())
                 {
@@ -198,6 +202,26 @@ namespace sailadex
             {
                 if (Plugin.statsUIEnabled.Value && GameState.currentBoat != null)
                     StatsUI.instance.TrackDistance();
+            }
+        }
+
+        [HarmonyPatch(typeof(WeatherStorms))]
+        private class WeatherStormPatches
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch("GetNormalizedDistance")]
+            public static void GetNormalizedDistancePatch(float __result)
+            {
+                if (Plugin.statsUIEnabled.Value 
+                    && GameState.currentBoat != null
+                    && !GameState.currentBoat.parent.gameObject.GetComponent<BoatMooringRopes>().AnyRopeMoored()
+                    && __result <= WeatherStorms.instance.GetPrivateField<float>("rainBorder"))
+                {
+                    StatsUI.instance.IncrementStormsWeathered();
+                }
+
+                if (__result > WeatherStorms.instance.GetPrivateField<float>("cloudyBorder"))
+                    StatsUI.instance.ClearLastStorm();
             }
         }
     }
