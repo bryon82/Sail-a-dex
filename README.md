@@ -4,7 +4,8 @@ This Sailwind mod is intended to keep track of various player activities along w
 
 ### Requires
 * [BepInEx 5.4.23](https://github.com/BepInEx/BepInEx/releases)
-* [SailwindModdingHelper 2.0.3](https://thunderstore.io/c/sailwind/p/App24/SailwindModdingHelper/)
+* [SailwindModdingHelper 2.1.1](https://thunderstore.io/c/sailwind/p/App24/SailwindModdingHelper/)
+* [ModSaveBackups 1.0.2](https://thunderstore.io/c/sailwind/p/RadDude/ModSaveBackups/)
 
 ## Fish Caught Log
 
