@@ -28,7 +28,7 @@ namespace sailadex
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    fishBadgeName = FishCaughtUI.ShortFishName(fishName) + amountNums[i];
+                    fishBadgeName = fishName + amountNums[i];
                     tempTexture = LoadTexture(Path.Combine(fishBadgesPath, fishBadgeName + ".png"));
                     textures.Add(fishBadgeName, tempTexture);
                     materials.Add(fishBadgeName, CreateMaterial(tempTexture));

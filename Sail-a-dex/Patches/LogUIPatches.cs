@@ -62,7 +62,6 @@ namespace sailadex
             [HarmonyPatch("Start")]
             public static void StartPatch(MissionListUI __instance, GameObject ___modeButtons, GameObject ___reputationUI)
             {
-                Names.fishNames.AddRange(Names.lagoonFish);
                 AssetsLoader.Start();
 
                 bookmarkPos = new Stack<float>();
@@ -121,10 +120,10 @@ namespace sailadex
                 fishCaughtTextGO.transform.GetChild(1).gameObject.name = "caught count";
                 fishCaughtTextGO.transform.GetChild(1).localPosition = new Vector3(55f, 0f, fishCaughtTextGO.transform.GetChild(1).localPosition[2]);
                 fishCaughtTextGO.transform.GetChild(1).GetComponent<TextMesh>().fontSize = 50;
-                TextMesh[] caughtCountTexts = new TextMesh[Names.fishNames.Count + 1];
-                TextMesh[] fishnameTexts = new TextMesh[Names.fishNames.Count + 1];
+                TextMesh[] caughtCountTexts = new TextMesh[Names.fishNames.Length + 1];
+                TextMesh[] fishnameTexts = new TextMesh[Names.fishNames.Length + 1];
 
-                for (int i = 0; i < Names.fishNames.Count; i++)
+                for (int i = 0; i < Names.fishNames.Length; i++)
                 {
                     GameObject newFishCaughtTextGO = GameObject.Instantiate(fishCaughtTextGO);
                     UnityEngine.Object.Destroy(newFishCaughtTextGO.transform.GetChild(4).gameObject);
@@ -132,7 +131,7 @@ namespace sailadex
                     UnityEngine.Object.Destroy(newFishCaughtTextGO.transform.GetChild(2).gameObject);
                     UnityEngine.Object.Destroy(newFishCaughtTextGO.transform.GetChild(0).gameObject);
                     newFishCaughtTextGO.GetComponent<TextMesh>().fontSize = 50;
-                    newFishCaughtTextGO.name = FishCaughtUI.ShortFishName(Names.fishNames[i]);
+                    newFishCaughtTextGO.name = Names.fishNames[i];
                     newFishCaughtTextGO.transform.parent = fishCaughtTextGO.transform.parent;
                     newFishCaughtTextGO.transform.localPosition = new Vector3(0.8f, 0.24f - 0.0375f * i, fishCaughtTextGO.transform.localPosition[2]);
                     newFishCaughtTextGO.transform.localRotation = fishCaughtTextGO.transform.localRotation;
@@ -160,8 +159,8 @@ namespace sailadex
                 totalCaughtTextGO.transform.localPosition = new Vector3(0.8f, -0.21f, fishCaughtTextGO.transform.localPosition[2]);
                 totalCaughtTextGO.transform.localRotation = fishCaughtTextGO.transform.localRotation;
                 totalCaughtTextGO.transform.localScale = fishCaughtTextGO.transform.localScale;
-                fishnameTexts[Names.fishNames.Count] = totalCaughtTextGO.GetComponent<TextMesh>();
-                caughtCountTexts[Names.fishNames.Count] = totalCaughtTextGO.transform.GetChild(1).GetComponent<TextMesh>();
+                fishnameTexts[Names.fishNames.Length] = totalCaughtTextGO.GetComponent<TextMesh>();
+                caughtCountTexts[Names.fishNames.Length] = totalCaughtTextGO.transform.GetChild(1).GetComponent<TextMesh>();
 
                 string[] totalCaughtBadges = { "caught50", "caught250", "caught500", "caughtAll" };
 

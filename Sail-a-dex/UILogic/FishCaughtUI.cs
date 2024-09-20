@@ -24,24 +24,15 @@ namespace sailadex
             foreach (string fishName in Names.fishNames)
             {
                 caughtFish.Add(fishName, 0);
-
-                var shortFishName = ShortFishName(fishName);
-                fishBadges.Add(shortFishName + "25", false);
-                fishBadges.Add(shortFishName + "50", false);
-                fishBadges.Add(shortFishName + "100", false);
+                fishBadges.Add(fishName + "25", false);
+                fishBadges.Add(fishName + "50", false);
+                fishBadges.Add(fishName + "100", false);
             }
 
             foreach (string badgeName in Names.totalFishBadgeNames) 
             {
                 fishBadges.Add(badgeName, false);
             }
-        }
-
-        public static string ShortFishName(string name)
-        {
-            if (!Regex.IsMatch(name, @"^\d"))
-                return name;
-            return name.Substring(3, name.IndexOf("(") - 4);
         }
 
         public void RegisterCatch(GameObject fish)
@@ -70,9 +61,9 @@ namespace sailadex
             foreach (KeyValuePair<string, int> fish in caughtFish)
             {
                 if (Plugin.fishNamesHidden.Value)
-                    fishNameTMs[i].text = fish.Value > 0 ? ShortFishName(fish.Key) : "???";
+                    fishNameTMs[i].text = fish.Value > 0 ? fish.Key : "???";
                 else
-                    fishNameTMs[i].text = ShortFishName(fish.Key);
+                    fishNameTMs[i].text = fish.Key;
                 caughtCountTMs[i].text = fish.Value.ToString();
                 catchSum += fish.Value;
                 i++;
@@ -89,15 +80,14 @@ namespace sailadex
 
         public void CheckIndividualFishBadges(string fishName)
         {
-            var shortFishName = ShortFishName(fishName);
             int[] amts = { 25, 50, 100 };
             foreach (int amt in amts)
             {
-                if (!fishBadges[shortFishName + "" + amt] && caughtFish[fishName] >= amt)
+                if (!fishBadges[fishName + "" + amt] && caughtFish[fishName] >= amt)
                 {
                     if (Plugin.notificationsEnabled.Value)
-                        NotificationUiQueue.instance.QueueNotification($"Caught {amt} {shortFishName}");
-                    fishBadges[shortFishName + "" + amt] = true;
+                        NotificationUiQueue.instance.QueueNotification($"Caught {amt} {fishName}");
+                    fishBadges[fishName + "" + amt] = true;
                 }
             }
         }

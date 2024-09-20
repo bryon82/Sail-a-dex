@@ -3,7 +3,7 @@ using SailwindModdingHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using System.Text.RegularExpressions;
 using static sailadex.LogUIPatches;
 
 namespace sailadex
@@ -73,7 +73,7 @@ namespace sailadex
                 }
 
                 // convert save containers
-                // TODO: remove in next minor version
+                // TODO: remove in next major version
                 SailadexSaveContainer saveContainer;
                 if (objSaveContainer.GetType() == typeof(RaddudeSaveContainer))
                 {
@@ -97,7 +97,8 @@ namespace sailadex
                 {
                     if (saveContainer.caughtFish != null)
                     {
-                        LoadDictionary(saveContainer.caughtFish, FishCaughtUI.instance.caughtFish);
+                        //LoadDictionary(saveContainer.caughtFish, FishCaughtUI.instance.caughtFish);
+                        ConvertFishNames(saveContainer.caughtFish, FishCaughtUI.instance.caughtFish);
                     }
 
                     if (saveContainer.fishBadges != null)
@@ -106,7 +107,7 @@ namespace sailadex
                     }
 
                     // for 1.0.0 saves that didn't have badges yet
-                    // TODO: remove in next minor version
+                    // TODO: remove in next major version
                     foreach (string fishName in Names.fishNames)
                         FishCaughtUI.instance.CheckIndividualFishBadges(fishName);
                     FishCaughtUI.instance.CheckAllFishBadges();
@@ -125,7 +126,7 @@ namespace sailadex
                     }
 
                     // for 1.0.0 saves that didn't have badges yet
-                    // TODO: remove in next minor version
+                    // TODO: remove in next major version
                     PortsVisitedUI.instance.CheckBadges();
                 }
 
@@ -167,6 +168,25 @@ namespace sailadex
                     }
                     Plugin.logger.LogWarning($"LoadData: {item.Key} not found in game");
                 }                
+            }
+
+            // Conversion done to accomodate different way of getting fish names so ffl fish are included
+            // TODO: Remove this at next major version
+            public static void ConvertFishNames(Dictionary<string, int> oldFishCount, Dictionary<string, int> newFishCount) 
+            {
+                // load normally if already converted
+                if (!oldFishCount.ContainsKey("31 templefish (A)"))
+                    LoadDictionary(oldFishCount, newFishCount);
+
+                // convert to new naming style
+                Plugin.logger.LogDebug("Converting fishNames in fish caught counts");
+                foreach (KeyValuePair<string, int> item in oldFishCount)
+                {
+                    var name = item.Key;
+                    if (Regex.IsMatch(name, @"^\d"))
+                        name = name.Substring(3, name.IndexOf("(") - 4);
+                    newFishCount[name] = item.Value;                    
+                }
             }
         }        
     }
